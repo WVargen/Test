@@ -2,19 +2,14 @@ package testJDBC;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.mysql.jdbc.PreparedStatement;
 
 class JDBCOperation {
-	private static Connection getConn() {
+	static Connection getConn(String username,String password) {
 		String driver = "com.mysql.jdbc.Driver";
 		String url = "jdbc:mysql://localhost:3306/test";
-		String username = "root";
-		String password = "123456";
 		Connection conn = null;
 		System.out.println("Connecting to database...");
 		try {
@@ -28,8 +23,7 @@ class JDBCOperation {
 		return conn;
 	}
 	 
-	static int createtable() {
-	    Connection conn = getConn();
+	static int createtable(Connection conn) {
 	    int i = 0;
 	    String sql = "CREATE TABLE students " +
                 	 "(ID INTEGER not NULL AUTO_INCREMENT, " +
@@ -49,42 +43,13 @@ class JDBCOperation {
 	    }
 	    return i;
 	}
-	
-	
-	static List<chinese_unit_test> getAll() {
-	    Connection conn = getConn();
+		
+	static ResultSet getAll(Connection conn) throws SQLException {
 	    String sql = "select * from chinese_unit_test";
 	    PreparedStatement pstmt;
-	    List<chinese_unit_test> databean = new ArrayList<chinese_unit_test>();
-	    try {
-	        pstmt = (PreparedStatement)conn.prepareStatement(sql);
-	        ResultSet rs = pstmt.executeQuery();
-	        while (rs.next()) {
-	            chinese_unit_test chi_uni = new chinese_unit_test();
-	            chi_uni.set_id(rs.getInt(1));
-	            chi_uni.setCourse(rs.getString(2));
-				chi_uni.setBookid(rs.getInt(3));
-		        chi_uni.setUnitid(rs.getString(4));
-		        chi_uni.setUnit(rs.getString(5));
-		        chi_uni.setName(rs.getString(6));
-		        chi_uni.setPermission(rs.getString(7));
-		        chi_uni.setKewenAuthor(rs.getString(8));
-		        chi_uni.setLession(rs.getString(9));
-		        chi_uni.setType(rs.getInt(10));
-		        chi_uni.setRead(rs.getString(11));
-		        chi_uni.setCizu(rs.getString(12));
-		        chi_uni.setAudio_filename(rs.getString(13));
-		        chi_uni.setDisplayOrder(rs.getInt(14));
-		        chi_uni.setUnit_edition(rs.getInt(15));
-		        chi_uni.setExt_chengyu(rs.getString(16));
-		        chi_uni.setPermissiongroup(rs.getString(17));
-		        databean.add(chi_uni);
-		        //System.out.println(chi_uni.getName());
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return databean;
+	    pstmt = conn.prepareStatement(sql);
+	    ResultSet rs = pstmt.executeQuery();  
+	    return rs;
 	}
 	
 

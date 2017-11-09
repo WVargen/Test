@@ -1,4 +1,5 @@
 package testJDBC;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,9 +14,9 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 public class ExcelUtils {
 
-	public static void WriteToFile(String outputFilePath, List<chinese_unit_test> datas)
+	public static void WriteToFile(File file, List<String[]> datas)
 	{
-		ArrayList<chinese_unit_test> bean = new ArrayList<chinese_unit_test>();
+		ArrayList<String[]> bean = new ArrayList<String[]>();
 		bean.addAll(datas);
 		
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -34,16 +35,13 @@ public class ExcelUtils {
 			HSSFRow rowscore = sheet.createRow(i);
 			HSSFCell  cellscore = null;
 
-			for(int j = 0;j < 17;j++)
+			for(int j = 0;j < bean.get(i).length;j++)
 			{
 				cellscore = rowscore.createCell(j);
 				cellscore.setCellStyle(style);
-				String cellvalue = bean.get(i).getChinese_unit_list().get(j);
+				String cellvalue = bean.get(i)[j];
 				try {
-					//if (cellvalue != null){
-					//	System.out.println(cellvalue);
 					cellscore.setCellValue(cellvalue);
-					//}
 				} catch (Exception e) {
 					System.out.println(e);
 				}
@@ -55,7 +53,7 @@ public class ExcelUtils {
 		FileOutputStream out = null;
     	
     	try {
-    		out = new FileOutputStream(outputFilePath);
+    		out = new FileOutputStream(file);
     		wb.write(out);
 			
 		} catch (Exception e) {

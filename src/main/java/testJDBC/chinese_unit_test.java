@@ -1,8 +1,5 @@
 package testJDBC;
 
-import java.util.ArrayList;
-import java.util.List;
-
 class chinese_unit_test {
         private int _id;
         private String course;
@@ -21,10 +18,15 @@ class chinese_unit_test {
         private int unit_edition;
         private String ext_chengyu;
         private String permissiongroup;
-        private List<String> chinese_unit_list = new ArrayList<>();
+        private static String[] title = {"_id","course","bookid","unitid","unit","name","permission",
+        		"kewenAuthor","lession","type","read","cizu","audio_filename","displayOrder",
+        		"unit_edition","ext_chengyu","permissiongroup"};
+        
+        public static String[] getTitle() {
+			return title;
+		}
 
-
-        public chinese_unit_test(int _id, String course, int bookid, String unitid, String unit, String name,
+		public chinese_unit_test(int _id, String course, int bookid, String unitid, String unit, String name,
 				String permission, String kewenAuthor, String lession, int type, String read, String cizu,
 				String audio_filename, int displayOrder, int unit_edition, String ext_chengyu, String permissiongroup) {
 			super();
@@ -51,7 +53,6 @@ class chinese_unit_test {
 		public chinese_unit_test() {
 			// TODO Auto-generated constructor stub
 		}
-
 
 		public int get_id() {
 			return _id;
@@ -223,29 +224,11 @@ class chinese_unit_test {
 		}
 
 
-		public List<String> getChinese_unit_list() {
-			chinese_unit_list.add(Integer.toString(this._id));
-			chinese_unit_list.add(this.course);
-			chinese_unit_list.add(Integer.toString(this.bookid));
-			chinese_unit_list.add(this.unitid);
-			chinese_unit_list.add(this.unit);
-			
-			chinese_unit_list.add(this.name);	
-			chinese_unit_list.add(this.permission);
-			chinese_unit_list.add(this.kewenAuthor);
-			chinese_unit_list.add(this.lession);
-			chinese_unit_list.add(Integer.toString(this.type));
-			
-			chinese_unit_list.add(this.read);
-			chinese_unit_list.add(this.cizu);
-			chinese_unit_list.add(this.audio_filename);
-			chinese_unit_list.add(Integer.toString(this.displayOrder));
-			chinese_unit_list.add(Integer.toString(this.unit_edition));
-
-			chinese_unit_list.add(this.ext_chengyu);
-			chinese_unit_list.add(this.permissiongroup);
-			chinese_unit_list.add(this.ext_chengyu);
-
+		public String[] getChinese_unit_string() {
+			String[] chinese_unit_list = {Integer.toString(this._id),this.course,Integer.toString(this.bookid),
+					this.unitid,this.unit,this.name,this.permission,this.kewenAuthor,
+					this.lession,Integer.toString(this.type),this.read,this.cizu,this.audio_filename,Integer.toString(this.displayOrder),
+					Integer.toString(this.unit_edition),this.ext_chengyu,this.permissiongroup,this.ext_chengyu};
 			return chinese_unit_list;
 		}
 		
