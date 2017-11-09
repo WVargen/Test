@@ -24,7 +24,7 @@ public class App
     	File file = Utils.createFile(path,name);
     	Connection conn = JDBCOperation.getConn(username,password);
         ResultSet rSet = JDBCOperation.getAll(conn);
-        String[] cUnit_test = null;
+        chinese_unit_test cUnit_test = null;
         int i = 0;
         databean.add(chinese_unit_test.getTitle());
         while(rSet.next()){
@@ -33,10 +33,14 @@ public class App
         				rSet.getString(5),rSet.getString(6),rSet.getString(7),rSet.getString(8),
         				rSet.getString(9),rSet.getInt(10),rSet.getString(11),rSet.getString(12),
         				rSet.getString(13),rSet.getInt(14),rSet.getInt(15),rSet.getString(16),
-        				rSet.getString(17)).getChinese_unit_string();
-        	 System.out.println("第"+i+"行数据...");
-        	 Utils.ParseJson(rSet.getString(12));
-        	 databean.add(cUnit_test);
+        				rSet.getString(17));
+        	 String cizu = Utils.ParseJson(rSet.getString(12)).toString();
+        	 String chengyu = Utils.ParseJson(rSet.getString(16)).toString();
+        	 cUnit_test.setCizu(cizu);
+        	 cUnit_test.setExt_chengyu(chengyu);
+        	 String[] data = cUnit_test.getChinese_unit_string();
+        	 System.out.println("第"+i+"行数据...");      	
+        	 databean.add(data);
         }
 
         ExcelUtils.WriteToFile(file, databean);
