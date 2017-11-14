@@ -228,7 +228,7 @@ class chinese_unit_test {
 			String[] chinese_unit_list = {Integer.toString(this._id),this.course,Integer.toString(this.bookid),
 					this.unitid,this.unit,this.name,this.permission,this.kewenAuthor,
 					this.lession,Integer.toString(this.type),this.read,this.cizu,this.audio_filename,Integer.toString(this.displayOrder),
-					Integer.toString(this.unit_edition),this.ext_chengyu,this.permissiongroup,this.ext_chengyu};
+					Integer.toString(this.unit_edition),this.ext_chengyu,this.permissiongroup};
 			return chinese_unit_list;
 		}
 		
