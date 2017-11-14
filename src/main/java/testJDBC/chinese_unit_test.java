@@ -7,7 +7,6 @@ class chinese_unit_test {
         private String unitid;
         private String unit;
         private String name;
-        private String permission;
         private String kewenAuthor;
         private String lession;
         private int type;
@@ -17,18 +16,24 @@ class chinese_unit_test {
         private int displayOrder;
         private int unit_edition;
         private String ext_chengyu;
+        private String permission;
         private String permissiongroup;
-        private static String[] title = {"_id","course","bookid","unitid","unit","name","permission",
-        		"kewenAuthor","lession","type","read","cizu","audio_filename","displayOrder",
-        		"unit_edition","ext_chengyu","permissiongroup"};
+//        private static String[] title = {"_id","course","bookid","unitid","unit","name","permission",
+//        		"kewenAuthor","lession","type","read","cizu","audio_filename","displayOrder",
+//        		"unit_edition","ext_chengyu","permissiongroup"};
+        private static String[] title = {"_id","course","bookid","单元","序号","课文名","type","识字表","写字表","词组","成语"};
         
-        public static String[] getTitle() {
+        public static void setTitle(String[] title) {
+			chinese_unit_test.title = title;
+		}
+
+		public static String[] getTitle() {
 			return title;
 		}
 
 		public chinese_unit_test(int _id, String course, int bookid, String unitid, String unit, String name,
-				String permission, String kewenAuthor, String lession, int type, String read, String cizu,
-				String audio_filename, int displayOrder, int unit_edition, String ext_chengyu, String permissiongroup) {
+				 String kewenAuthor, String lession, int type, String read, String cizu,
+				String audio_filename, int displayOrder, int unit_edition, String ext_chengyu,String permission, String permissiongroup) {
 			super();
 			this._id = _id;
 			this.course = course;
@@ -36,7 +41,6 @@ class chinese_unit_test {
 			this.unitid = unitid;
 			this.unit = unit;
 			this.name = name;
-			this.permission = permission;
 			this.kewenAuthor = kewenAuthor;
 			this.lession = lession;
 			this.type = type;
@@ -46,6 +50,7 @@ class chinese_unit_test {
 			this.displayOrder = displayOrder;
 			this.unit_edition = unit_edition;
 			this.ext_chengyu = ext_chengyu;
+			this.permission = permission;
 			this.permissiongroup = permissiongroup;			
 		}
 
@@ -226,9 +231,7 @@ class chinese_unit_test {
 
 		public String[] getChinese_unit_string() {
 			String[] chinese_unit_list = {Integer.toString(this._id),this.course,Integer.toString(this.bookid),
-					this.unitid,this.unit,this.name,this.permission,this.kewenAuthor,
-					this.lession,Integer.toString(this.type),this.read,this.cizu,this.audio_filename,Integer.toString(this.displayOrder),
-					Integer.toString(this.unit_edition),this.ext_chengyu,this.permissiongroup};
+					this.unit,this.lession,this.name,Integer.toString(this.type),this.read,this.read,this.cizu,this.ext_chengyu};
 			return chinese_unit_list;
 		}
 		

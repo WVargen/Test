@@ -45,7 +45,7 @@ class JDBCOperation {
 	}
 		
 	static ResultSet getAll(Connection conn) throws SQLException {
-	    String sql = "select * from chinese_unit_test";
+	    String sql = "select * from chinese_unit_sh";
 	    PreparedStatement pstmt;
 	    pstmt = conn.prepareStatement(sql);
 	    ResultSet rs = pstmt.executeQuery();  

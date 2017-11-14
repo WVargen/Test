@@ -22,7 +22,7 @@ public class Utils {
 	return file;
 	}
 	   
-	public static StringBuffer ParseJson(String jsonString) {
+	public static String ParseJson(String jsonString) {
 	        JSONObject jsonObject = JSONObject.parseObject(jsonString);
 	        StringBuffer stringBuffer = new StringBuffer();
 	        JSONArray jsonArray = null;
@@ -32,10 +32,10 @@ public class Utils {
 	        	for (int i = 0; i < jsonArray.size(); i++) {
 	        		JSONObject jObject = jsonArray.getJSONObject(i);
 	        		stringBuffer.append(jObject.getString("n"));
-	        		stringBuffer.append("|");
+	        		stringBuffer.append(" ");
 	        	}
-        		System.out.println(stringBuffer);
+        		//System.out.println(stringBuffer);
 	        }
-			return stringBuffer;
+			return stringBuffer.toString();
 	    }	
 }
