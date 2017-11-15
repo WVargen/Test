@@ -3,6 +3,9 @@ package testJDBC;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.lang.reflect.Field;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,13 +30,18 @@ public class App
         ResultSet rSet = JDBCOperation.getAll(conn);
         chinese_unit_test cUnit_test = null;
         
-        
         while(rSet.next()){
         	 cUnit_test = new chinese_unit_test(rSet.getInt(1),rSet.getString(2),rSet.getInt(3),rSet.getString(4),
         				rSet.getString(5),rSet.getString(6),rSet.getString(7),rSet.getString(8),
         				rSet.getInt(9),rSet.getString(10),rSet.getString(11),rSet.getString(12),
         				rSet.getInt(13),rSet.getInt(14),rSet.getString(15),rSet.getString(16),
         				rSet.getString(17));
+        	 Class<? extends chinese_unit_test> clazz = cUnit_test.getClass();
+        	 Field[] fields = clazz.getDeclaredFields();
+        	 for (int i = 0; i < fields.length; i++) {
+                 System.out.println(fields[i].getName());
+             }
+        	 
         	 name_temp = name;
         	 name = cUnit_test.get_id() + "_" + cUnit_test.getCourse() + "_"
         			 + cUnit_test.getBookid() + ".xlsx";
