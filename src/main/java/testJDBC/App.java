@@ -1,14 +1,12 @@
 package testJDBC;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.lang.reflect.Field;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Hello world!
@@ -16,20 +14,21 @@ import java.sql.SQLException;
  */
 public class App 
 {
-    public static void main( String[] args ) throws SQLException
+    public static void main( String[] args ) throws Exception
     {
     	List<String []> databean = new ArrayList<String []>();
 
     	String username = "root";
     	String password = "123456";
-   	 	String path = "C:/Users/vargen/Desktop/test";
+   	 	String path = "C:/Users/vargen/Desktop/test/";
    	 	String name = "";
    	 	String name_temp = "";
    	 	File file = null;
     	Connection conn = JDBCOperation.getConn(username,password);
         ResultSet rSet = JDBCOperation.getAll(conn);
         chinese_unit_test cUnit_test = null;
-        
+        name = "句型_小韦.xlsx";
+        ExcelUtils.ReadFromFile(path+name);
         while(rSet.next()){
         	 cUnit_test = new chinese_unit_test(rSet.getInt(1),rSet.getString(2),rSet.getInt(3),rSet.getString(4),
         				rSet.getString(5),rSet.getString(6),rSet.getString(7),rSet.getString(8),
@@ -38,8 +37,13 @@ public class App
         				rSet.getString(17));
         	 Class<? extends chinese_unit_test> clazz = cUnit_test.getClass();
         	 Field[] fields = clazz.getDeclaredFields();
-        	 for (int i = 0; i < fields.length; i++) {
-                 System.out.println(fields[i].getName());
+        	 boolean editable = false;
+        	 for (int i = 1; i < fields.length; i++) {
+        		 editable = fields[i].getAnnotation(MyAnnotation.class).editable();
+        		 //System.out.println(editable);
+        		 if (editable) {
+        			 //System.out.println(fields[i].getAnnotation(MyAnnotation.class).name());
+				}          
              }
         	 
         	 name_temp = name;

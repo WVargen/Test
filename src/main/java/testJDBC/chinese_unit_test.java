@@ -1,26 +1,40 @@
 package testJDBC;
 
 class chinese_unit_test {
+		@MyAnnotation(name = "_id",order = 1)
         private int _id;
+		@MyAnnotation(name = "course",order = 2)
         private String course;
+		@MyAnnotation(name = "bookid",order = 3)
         private int bookid;
+		@MyAnnotation(name = "unitid",order = 4,editable = false)
         private String unitid;
+		@MyAnnotation(name = "单元",order = 5)
         private String unit;
+		@MyAnnotation(name = "课文名",order = 6)
         private String name;
+		@MyAnnotation(name = "课文作者",order = 7,editable = false)
         private String kewenAuthor;
+		@MyAnnotation(name = "序号",order = 8)
         private String lession;
+		@MyAnnotation(name = "type",order = 9)
         private int type;
+		@MyAnnotation(name = "内容",order = 10)
         private String read;
+		@MyAnnotation(name = "词组",order = 11)
         private String cizu;
+		@MyAnnotation(name = "录音文件名",order = 12,editable = false)
         private String audio_filename;
+		@MyAnnotation(name = "展示顺序",order = 13,editable = false)
         private int displayOrder;
+		@MyAnnotation(name = "单元编辑",order = 14,editable = false)
         private int unit_edition;
+		@MyAnnotation(name = "成语",order = 15)
         private String ext_chengyu;
+		@MyAnnotation(name = "permission",order = 16,editable = false)
         private String permission;
+		@MyAnnotation(name = "permissiongroup",order = 17,editable = false)
         private String permissiongroup;
-//        private static String[] title = {"_id","course","bookid","unitid","unit","name","permission",
-//        		"kewenAuthor","lession","type","read","cizu","audio_filename","displayOrder",
-//        		"unit_edition","ext_chengyu","permissiongroup"};
         private static String[] title = {"_id","course","bookid","单元","序号","课文名","type","识字表","写字表","词组","成语"};
         
         public static void setTitle(String[] title) {

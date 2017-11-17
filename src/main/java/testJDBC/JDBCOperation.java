@@ -14,7 +14,7 @@ class JDBCOperation {
 		System.out.println("Connecting to database...");
 		try {
 			Class.forName(driver); //classLoader,加载对应驱动
-			conn = (Connection) DriverManager.getConnection(url, username, password);
+			conn = DriverManager.getConnection(url, username, password);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -33,7 +33,7 @@ class JDBCOperation {
                 	 " PRIMARY KEY ( id ))"; 
 	    PreparedStatement pstmt;
 	    try {
-	        pstmt = (PreparedStatement) conn.prepareStatement(sql);
+	        pstmt = conn.prepareStatement(sql);
 	        i = pstmt.executeUpdate();
 	        System.out.println("Created table in given database...");
 	        pstmt.close();
