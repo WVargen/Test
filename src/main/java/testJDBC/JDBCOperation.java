@@ -6,8 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-class JDBCOperation {
-	static Connection getConn(String username,String password) {
+public class JDBCOperation {
+	public static Connection getConn(String username,String password) {
 		String driver = "com.mysql.jdbc.Driver";
 		String url = "jdbc:mysql://localhost:3306/test";
 		Connection conn = null;
@@ -44,7 +44,7 @@ class JDBCOperation {
 	    return i;
 	}
 		
-	static ResultSet getAll(Connection conn) throws SQLException {
+	public static ResultSet getAll(Connection conn) throws SQLException {
 	    String sql = "select * from chinese_unit_sh";
 	    PreparedStatement pstmt;
 	    pstmt = conn.prepareStatement(sql);

@@ -1,6 +1,6 @@
 package testJDBC;
 
-class chinese_unit_test {
+public class chinese_unit_test {
 		@MyAnnotation(name = "_id",order = 1)
         private int _id;
 		@MyAnnotation(name = "course",order = 2)
@@ -35,6 +35,7 @@ class chinese_unit_test {
         private String permission;
 		@MyAnnotation(name = "permissiongroup",order = 17,editable = false)
         private String permissiongroup;
+		
         private static String[] title = {"_id","course","bookid","单元","序号","课文名","type","识字表","写字表","词组","成语"};
         
         public static void setTitle(String[] title) {
