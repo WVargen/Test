@@ -25,10 +25,10 @@ public class RegularExpression
     	String outputpath_doc = "C:/Users/vargen/Desktop/test/2.xlsx";
     	File docfile = new File(outputpath_doc);
     	
-    	
-    	List<String[]> dox_data = WordMatch.matchWord(inputpath_doc);
-    	testJDBC.ExcelUtils.WriteToFile(docfile, dox_data);
-    	
+    	//word文档部分
+    	//List<String[]> dox_data = WordMatch.matchWord(inputpath_doc);
+    	//testJDBC.ExcelUtils.WriteToFile(docfile, dox_data);
+    	Snippet.test();
     	
     	//句型部分
     	String read_xls[][] = null;

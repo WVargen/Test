@@ -1,5 +1,8 @@
 package testRec;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -11,34 +14,27 @@ public class WordMatch {
 	
 	public static List<String[]> matchWord(String inputpath) {
 		List<String []> datas = new ArrayList<>();
-		String[] data = null;
     	
 		String read_doc = WordUtil.readDataDocx(inputpath);//.replace("\n", "");
     	Matcher matcher_content = pattern_content.matcher(read_doc);
     	String rdoc_content = matchBegin(matcher_content, read_doc);
     	
-    	String regex_title = "[一二三四五六七八九]\\s*\\、\\s*[\u0391-\uFFE5]{2,6}\n+";
-    	String regex_num = "[0-9]\\s*\\、+\\s*";
+    	String regex_title = "[一二三四五六七八九]\\s*\\、\\s*[\u0391-\uFFE5]{1,6}\n*";
+    	String regex_num = "[0-9]+?\\s*\\、+\\s*\n*";
     	String[] arr = rdoc_content.split(regex_title);
-    	for (String s : arr) {	
-    		data = s.split(regex_num);
-    		datas.add(data);
-    		
-//    		Matcher matcher_num = pattern_num.matcher(s);
-//    		datas.add(matchBeginAndEnd(matcher_num,s));
-//          System.out.println("============"+s);
-        }
-        for(String d:data){
-        	System.out.println("============"+d);
-        }
-//    	Matcher matcher_1 = pattern_1.matcher(read_doc);
-//		datas = match(matcher_1, read_doc);
-//		for (int i = 0; i < datas.size(); i++) {
-//			Matcher matcher_2 = pattern_2.matcher(datas.get(i));
-//			data = match(matcher_2, datas.get(i));
-//			System.out.println(i+"===="+"\n"+data);
-//		}
-		
+    	for (String s : arr) {
+    		if (s.isEmpty())continue;
+    		String[] data = s.split(regex_num);
+        	List<String> dList = new ArrayList<>();
+        	for (String d:data) {
+				if (d.isEmpty())continue;
+				dList.add(d);
+			}
+        	datas.add(dList.toArray(new String [dList.size()])); 
+            for(String d:data){
+            	System.out.println("============"+d);
+            }
+        }		
 		return datas;
 		
 	}
@@ -75,4 +71,5 @@ public class WordMatch {
 		Object[] ret = r.toArray();
 		return ret;		
 	}
+	
 }
