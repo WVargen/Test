@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public class WordMatch {
 	public static String getPattern(String str, String pattern)
 	    {

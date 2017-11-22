@@ -8,13 +8,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -28,21 +29,21 @@ public class ExcelUtils {
 		ArrayList<String[]> bean = new ArrayList<String[]>();
 		bean.addAll(datas);
 		
-		HSSFWorkbook wb = new HSSFWorkbook();
-    	HSSFSheet sheet = wb.createSheet("Test");
+		XSSFWorkbook wb = new XSSFWorkbook();
+    	XSSFSheet sheet = wb.createSheet("Test");
     	
-    	HSSFFont font = wb.createFont();
+    	XSSFFont font = wb.createFont();
     	font.setFontName("Verdana");
     	
-    	HSSFCellStyle style = wb.createCellStyle();
+    	XSSFCellStyle style = wb.createCellStyle();
     	style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
     	
     	style.setFont(font);
 
 		for(int i = 0;i < datas.size();i++)
     	{
-			HSSFRow rowscore = sheet.createRow(i);
-			HSSFCell  cellscore = null;
+			XSSFRow rowscore = sheet.createRow(i);
+			XSSFCell  cellscore = null;
 
 			for(int j = 0;j < bean.get(i).length;j++)
 			{

@@ -28,7 +28,7 @@ public class RegularExpression
     	//word文档部分
     	//List<String[]> dox_data = WordMatch.matchWord(inputpath_doc);
     	//testJDBC.ExcelUtils.WriteToFile(docfile, dox_data);
-    	Snippet.test();
+    	WordMatch.test();
     	
     	//句型部分
     	String read_xls[][] = null;
