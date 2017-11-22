@@ -34,7 +34,7 @@ public class WordUtil {
 	
 	public static void save(XWPFDocument doc, String path)
 	{
-		Utils.file.checkAndCreateDirectory(path);
+		Utils.checkAndCreateDirectory(path);
 		
 		OutputStream os = null;
 		

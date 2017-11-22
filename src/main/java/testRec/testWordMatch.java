@@ -9,6 +9,27 @@ public class testWordMatch {
 	static Pattern pattern_content = Pattern.compile("([一二三四五六七八九]\\s*\\、).*?");
 	static Pattern pattern_num = Pattern.compile("([0-9]\\s*\\.*\\、\\s*).*?([0-9]\\s*\\.*\\、\\s*)");
 	
+	public static String getPattern(String str, String pattern)
+    {
+    	Pattern p = Pattern.compile(pattern);
+		Matcher m = p.matcher(str);
+
+		while(m.find())
+		{
+			try
+			{
+				return m.group(1);
+			}
+			catch (Exception e)
+			{
+				
+			}
+		}
+		
+		return null;
+    }
+	
+	
 	public static List<String[]> matchWord(String inputpath) {
 		List<String []> datas = new ArrayList<>();
     	
