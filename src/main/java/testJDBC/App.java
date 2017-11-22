@@ -49,7 +49,7 @@ public class App
         	 
         	 name_temp = name;
         	 name = cUnit_test.get_id() + "_" + cUnit_test.getCourse() + "_"
-        			 + cUnit_test.getBookid() + ".xls";
+        			 + cUnit_test.getBookid() + ".xlsx";
         	     	 
         	 String read = Utils.ParseJson(rSet.getString(10));
         	 String cizu = Utils.ParseJson(rSet.getString(11));

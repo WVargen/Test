@@ -13,12 +13,14 @@ public class testWordMatch {
     {
     	Pattern p = Pattern.compile(pattern);
 		Matcher m = p.matcher(str);
-
+		int index = 0;
 		while(m.find())
 		{
 			try
 			{
-				return m.group(1);
+				index ++;
+				System.out.println(index);
+				//return m.group(1);	
 			}
 			catch (Exception e)
 			{
@@ -34,25 +36,30 @@ public class testWordMatch {
 		List<String []> datas = new ArrayList<>();
     	
 		String read_doc = WordUtil.readDataDocx(inputpath);//.replace("\n", "");
-    	Matcher matcher_content = pattern_content.matcher(read_doc);
-    	String rdoc_content = matchBegin(matcher_content, read_doc);
-    	
-    	String regex_title = "[一二三四五六七八九]\\s*\\、\\s*[\u0391-\uFFE5]{1,6}\n*";
-    	String regex_num = "[0-9]+?\\s*\\、+\\s*\n*";
-    	String[] arr = rdoc_content.split(regex_title);
-    	for (String s : arr) {
-    		if (s.isEmpty())continue;
-    		String[] data = s.split(regex_num);
-        	List<String> dList = new ArrayList<>();
-        	for (String d:data) {
-				if (d.isEmpty())continue;
-				dList.add(d);
-			}
-        	datas.add(dList.toArray(new String [dList.size()])); 
-            for(String d:data){
-            	System.out.println("============"+d);
-            }
-        }		
+		System.out.println("frank 正则切割" + getPattern(read_doc, "(\\n[一二三四五六七八九][、.]{1}[\\s\\S]*?)\\n"));
+		
+//    	Matcher matcher_content = pattern_content.matcher(read_doc);
+//    	String rdoc_content = matchBegin(matcher_content, read_doc);
+//    	
+//    	String regex_title = "[一二三四五六七八九]\\s*\\、\\s*[\u0391-\uFFE5]{1,6}\n*";
+//    	String regex_num = "[0-9]+?\\s*\\、+\\s*\n*";
+//    	String[] arr = rdoc_content.split(regex_title);
+		
+		
+//		
+//    	for (String s : arr) {
+//    		if (s.isEmpty())continue;
+//    		String[] data = s.split(regex_num);
+//        	List<String> dList = new ArrayList<>();
+//        	for (String d:data) {
+//				if (d.isEmpty())continue;
+//				dList.add(d);
+//			}
+//        	datas.add(dList.toArray(new String [dList.size()])); 
+//            for(String d:data){
+//            	System.out.println("============"+d);
+//            }
+//        }		
 		return datas;
 		
 	}
@@ -62,7 +69,7 @@ public class testWordMatch {
 		String ret = "";
 		if(matcher.find(start))
 		{
-			String first = matcher.group(1);			
+			//String first = matcher.group(1);			
 			int sIndex = matcher.start();//+ first.length();
 			ret = string.substring(sIndex);				
 			//System.out.println("frank :=============" + string.substring(sIndex));
