@@ -2,13 +2,12 @@ package FindPoetry;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 
-import testJDBC.chinese_unit_test;
+import testJDBC.MyAnnotation;
 
 public class BeanUtils{
     /**  
@@ -22,31 +21,36 @@ public class BeanUtils{
         // 取出bean里的所有方法    
         Method[] methods = cls.getDeclaredMethods();    
         Field[] fields = cls.getDeclaredFields();    
-    
+        
         for (Field field : fields) {    
             try {    
-                String fieldType = field.getType().getSimpleName();
+                //String fieldType = field.getType().getSimpleName();
                 String fieldGetName = parGetName(field.getName()); 
-                System.out.println("fieldType:"+fieldType+"\n"+"fieldGetName:"+fieldGetName);
+                //System.out.println("fieldType:"+fieldType+"\n"+"fieldGetName:"+fieldGetName);
                 if (!checkGetMet(methods, fieldGetName)) {    
                     continue;    
                 }    
-                Method fieldGetMet = cls    
-                        .getMethod(fieldGetName, new Class[] {});    
+                Method fieldGetMet = cls.getMethod(fieldGetName, new Class[] {});    
                 Object fieldVal = fieldGetMet.invoke(bean, new Object[] {});    
                 String result = null;    
-                if ("Date".equals(fieldType)) {    
-                    result = fmtDate((Date) fieldVal);    
-                } else {    
-                    if (null != fieldVal) {    
-                        result = String.valueOf(fieldVal);    
-                    }    
-                }    
-                valueMap.put(field.getName(), result);    
+//                if ("Date".equals(fieldType)) {    
+//                    result = fmtDate((Date) fieldVal);    
+//                } else {    
+//                    if (null != fieldVal) {    
+//                        result = String.valueOf(fieldVal);    
+//                    }    
+//                }  
+                if (null != fieldVal) {    
+                	result = String.valueOf(fieldVal);    
+                }
+               
+                //valueMap.put(field.getAnnotation(testJDBC.MyAnnotation.class).name(), result); 
+                valueMap.put(field.getName(), result); 
             } catch (Exception e) {    
                 continue;    
             }    
-        }    
+        }
+        //System.out.println(valueMap);
         return valueMap;    
     
     }    
@@ -69,18 +73,16 @@ public class BeanUtils{
                 if (!checkSetMet(methods, fieldSetName)) {    
                     continue;    
                 }    
-                Method fieldSetMet = cls.getMethod(fieldSetName, field    
-                        .getType());    
-                String value = valMap.get(field.getName());    
+                Method fieldSetMet = cls.getMethod(fieldSetName, field.getType());    
+                String value = valMap.get(field.getName());
                 if (null != value && !"".equals(value)) {    
                     String fieldType = field.getType().getSimpleName();    
                     if ("String".equals(fieldType)) {    
                         fieldSetMet.invoke(bean, value);    
-                    } else if ("Date".equals(fieldType)) {    
-                        Date temp = parseDate(value);    
-                        fieldSetMet.invoke(bean, temp);    
-                    } else if ("Integer".equals(fieldType)    
-                            || "int".equals(fieldType)) {    
+//                    } else if ("Date".equals(fieldType)) {    
+//                        Date temp = parseDate(value);    
+//                        fieldSetMet.invoke(bean, temp);    
+                    } else if ("Integer".equals(fieldType) || "int".equals(fieldType)) {    
                         Integer intval = Integer.parseInt(value);    
                         fieldSetMet.invoke(bean, intval);    
                     } else if ("Long".equalsIgnoreCase(fieldType)) {    
@@ -95,55 +97,88 @@ public class BeanUtils{
                     } else {    
                         System.out.println("not supper type" + fieldType);    
                     }    
-                }    
+                } else{
+                	value = "";
+                	fieldSetMet.invoke(bean, value);
+                }
             } catch (Exception e) {    
                 continue;    
             }    
         }    
     
-    }    
+    }  
+                                     
     
-    /**  
-     * 格式化string为Date  
-     * @param datestr  
-     * @return date  
-     */    
-    public static Date parseDate(String datestr) {    
-        if (null == datestr || "".equals(datestr)) {    
-            return null;    
-        }    
-        try {    
-            String fmtstr = null;    
-            if (datestr.indexOf(':') > 0) {    
-                fmtstr = "yyyy-MM-dd HH:mm:ss";    
-            } else {    
+    public static List<String> getNamelist(Object bean,boolean isAnnontation) {    
+        Class<?> cls = bean.getClass();    
+        // 取出bean里的所有方法       
+        Field[] fields = cls.getDeclaredFields();
+        List<String> result = new ArrayList<>();
+        String name = null;
+        for (Field field : fields) {
+        	if (isAnnontation) {
+        		 name = field.getAnnotation(MyAnnotation.class).name();
+			}else{
+				 name = field.getName();
+			}
+        	result.add(name);
+        }
+		return result;
+    }
     
-                fmtstr = "yyyy-MM-dd";    
-            }    
-            SimpleDateFormat sdf = new SimpleDateFormat(fmtstr, Locale.UK);    
-            return sdf.parse(datestr);    
-        } catch (Exception e) {    
-            return null;    
-        }    
-    }    
+    public static List<Boolean> getEditable(Object bean) {
+    	Class<?> cls = bean.getClass();
+    	Field[] fields = cls.getDeclaredFields();
+    	List<Boolean> result = new ArrayList<>();
+    	boolean editable = false;
+    	for (Field field : fields) {
+			editable = field.getAnnotation(MyAnnotation.class).editable();
+			result.add(editable);
+		}
+		return result;
+		
+	}
     
-    /**  
-     * 日期转化为String  
-     * @param date  
-     * @return date string  
-     */    
-    public static String fmtDate(Date date) {    
-        if (null == date) {    
-            return null;    
-        }    
-        try {    
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",    
-                    Locale.US);    
-            return sdf.format(date);    
-        } catch (Exception e) {    
-            return null;    
-        }    
-    }    
+//    /**  
+//     * 格式化string为Date  
+//     * @param datestr  
+//     * @return date  
+//     */    
+//    public static Date parseDate(String datestr) {    
+//        if (null == datestr || "".equals(datestr)) {    
+//            return null;    
+//        }    
+//        try {    
+//            String fmtstr = null;    
+//            if (datestr.indexOf(':') > 0) {    
+//                fmtstr = "yyyy-MM-dd HH:mm:ss";    
+//            } else {    
+//    
+//                fmtstr = "yyyy-MM-dd";    
+//            }    
+//            SimpleDateFormat sdf = new SimpleDateFormat(fmtstr, Locale.UK);    
+//            return sdf.parse(datestr);    
+//        } catch (Exception e) {    
+//            return null;    
+//        }    
+//    }    
+//    
+//    /**  
+//     * 日期转化为String  
+//     * @param date  
+//     * @return date string  
+//     */    
+//    public static String fmtDate(Date date) {    
+//        if (null == date) {    
+//            return null;    
+//        }    
+//        try {    
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.US);    
+//            return sdf.format(date);    
+//        } catch (Exception e) {    
+//            return null;    
+//        }    
+//    }    
     
     /**  
      * 判断是否存在某属性的 set方法  
@@ -184,8 +219,7 @@ public class BeanUtils{
         if (null == fieldName || "".equals(fieldName)) {    
             return null;    
         }    
-        return "get" + fieldName.substring(0, 1).toUpperCase()    
-                + fieldName.substring(1);    
+        return "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);    
     }    
     
     /**  
@@ -197,7 +231,6 @@ public class BeanUtils{
         if (null == fieldName || "".equals(fieldName)) {    
             return null;    
         }    
-        return "set" + fieldName.substring(0, 1).toUpperCase()    
-                + fieldName.substring(1);    
+        return "set" + fieldName.substring(0, 1).toUpperCase()+ fieldName.substring(1);    
     } 
 }

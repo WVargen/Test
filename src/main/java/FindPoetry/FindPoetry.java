@@ -1,18 +1,15 @@
 package FindPoetry;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import testJDBC.ExcelUtils;
 import testJDBC.JDBCOperation;
-import testJDBC.MyAnnotation;
 import testJDBC.Utils;
-import testJDBC.chinese_unit_test;
 
 public class FindPoetry{
 	public static void main( String[] args ) throws Exception {
@@ -21,7 +18,7 @@ public class FindPoetry{
 		
 		String username = "root";
     	String password = "123456";
-   	 	String path = "C:/Users/hp/Desktop/test/";
+   	 	String path = "C:/Users/Vargen/Desktop/test/";
    	 	String name = "";
    	 	String name_temp = "";
    	 	File file = null;
@@ -29,31 +26,76 @@ public class FindPoetry{
         ResultSet rSet = JDBCOperation.getAll(conn);
         chinese_unit_test cUnit_test = new chinese_unit_test();
         
-        BeanUtils.getFieldValueMap(cUnit_test);
+        //BeanUtils.getFieldValueMap(cUnit_test);
+        
+        Map<String, String> valueMap = new HashMap<>();
+        Map<String, String> resultMap = new HashMap<>();
+        String kString = null;
+        String vString = null;
+        List<String> nameList = BeanUtils.getNamelist(cUnit_test,false);
+        List<String> chinameList = BeanUtils.getNamelist(cUnit_test, true);
+        //System.out.println(nameList);
+        while(rSet.next()){
+        	
+        	for(int i = 0;i<rSet.getMetaData().getColumnCount();i++){
+        		kString = nameList.get(i);
+        		//System.out.println(kString);
+                vString = rSet.getString(i+1);
+                //System.out.println(vString);
+                valueMap.put(kString, vString);
+            }
+        	//System.out.println(valueMap);
+        	
+        	//resultMap = BeanUtils.getFieldValueMap(cUnit_test);
+        	BeanUtils.setFieldValue(cUnit_test, valueMap);
+        	String read = Utils.ParseJson(rSet.getString(10));
+       	 	String cizu = Utils.ParseJson(rSet.getString(11));
+       	 	String chengyu = Utils.ParseJson(rSet.getString(15));
+       	 
+       	 	cUnit_test.setRead(read);
+       	 	cUnit_test.setCizu(cizu);
+       	 	cUnit_test.setExt_chengyu(chengyu);
+       	 	
+        	name_temp = name;
+        	name = cUnit_test.get_id() + "_" + cUnit_test.getCourse() + "_"
+        			 + cUnit_test.getBookid() + ".xlsx";
+        	 
+        	//String[] data = cUnit_test.getChinese_unit_string();     	
+        	//databean.add(data);
+        	 
+        	resultMap = BeanUtils.getFieldValueMap(cUnit_test);
+        	//System.out.println(resultMap);
+        	
+        	List<String> v = new ArrayList<>();
+        	List<String> chinamelist_edit = new ArrayList<>();
+        	for (int i = 0; i < nameList.size(); i++) {
+        		List<Boolean> editable = BeanUtils.getEditable(cUnit_test);
+        		//System.out.println(editable);
+        		if (editable.get(i)) {
+					chinamelist_edit.add(chinameList.get(i));
+    				String k = nameList.get(i);
+    				v.add(resultMap.get(k));
+				}else {
 
-//        while(rSet.next()){
-//        	
-//            String [] value = new String[17];
-//            for (int i = 0; i < value.length; i++) {
-//				
-//			}
-//            BeanUtils.processCUnit(cUnit_test, cUnit_test, value);
-////        	 name_temp = name;
-////        	 name = cUnit_test.get_id() + "_" + cUnit_test.getCourse() + "_"
-////        			 + cUnit_test.getBookid() + ".xlsx";
-////        	 
-////        	 String[] data = cUnit_test.getChinese_unit_string();     	
-////        	 databean.add(data);
-////        	 
-////        	 if (!name.equalsIgnoreCase(name_temp)) {
-////        		 file = Utils.createFile(path,name);
-////        		 databean.clear();
-////        		 databean.add(chinese_unit_test.getTitle());
-////        		 System.out.println("file path:" + file);
-////			}
-////        	 ExcelUtils.WriteToFile(file, databean);	 
-//        }
-//        System.out.println("complete！");
+				}	
+			}
+
+         	//System.out.println(v);
+        	String value[] = v.toArray(new String[v.size()]);
+        	if (cUnit_test.getType() == 5){
+            	databean.add(value);
+        	}
+       	
+        	if (!name.equalsIgnoreCase(name_temp)) {
+        		file = Utils.createFile(path,name);
+        		databean.clear();
+        		databean.add(chinamelist_edit.toArray(new String[chinamelist_edit.size()]));
+        		//databean.add(chinese_unit_test.getTitle());
+        		System.out.println("file path:" + file);
+			}
+        	ExcelUtils.WriteToFile(file, databean);	 
+        }
+        System.out.println("complete！");
 	}
 	
 }
