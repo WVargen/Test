@@ -18,7 +18,7 @@ public class FindPoetry{
 		
 		String username = "root";
     	String password = "123456";
-   	 	String path = "C:/Users/Vargen/Desktop/test/";
+   	 	String path = "C:/Users/hp/Desktop/test/";
    	 	String name = "";
    	 	String name_temp = "";
    	 	File file = null;
@@ -46,7 +46,6 @@ public class FindPoetry{
             }
         	//System.out.println(valueMap);
         	
-        	//resultMap = BeanUtils.getFieldValueMap(cUnit_test);
         	BeanUtils.setFieldValue(cUnit_test, valueMap);
         	String read = Utils.ParseJson(rSet.getString(10));
        	 	String cizu = Utils.ParseJson(rSet.getString(11));
@@ -57,14 +56,10 @@ public class FindPoetry{
        	 	cUnit_test.setExt_chengyu(chengyu);
        	 	
         	name_temp = name;
-        	name = cUnit_test.get_id() + "_" + cUnit_test.getCourse() + "_"
+        	name = "古诗" + cUnit_test.get_id() + "_" + cUnit_test.getCourse() + "_"
         			 + cUnit_test.getBookid() + ".xlsx";
         	 
-        	//String[] data = cUnit_test.getChinese_unit_string();     	
-        	//databean.add(data);
-        	 
         	resultMap = BeanUtils.getFieldValueMap(cUnit_test);
-        	//System.out.println(resultMap);
         	
         	List<String> v = new ArrayList<>();
         	List<String> chinamelist_edit = new ArrayList<>();

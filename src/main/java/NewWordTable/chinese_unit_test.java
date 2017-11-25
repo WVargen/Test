@@ -1,4 +1,4 @@
-package FindPoetry;
+package NewWordTable;
 
 import testJDBC.MyAnnotation;
 
@@ -21,7 +21,7 @@ public class chinese_unit_test {
         private String lession;
 		@MyAnnotation(name = "type",order = 9)
         private int type;
-		@MyAnnotation(name = "内容",order = 10)
+		@MyAnnotation(name = "生字表",order = 10)
         private String read;
 		@MyAnnotation(name = "词组",order = 11)
         private String cizu;

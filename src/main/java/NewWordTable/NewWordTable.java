@@ -1,16 +1,17 @@
 package NewWordTable;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeMap;
 
 public class NewWordTable{
-	public static String handleWordTable(String inputstring) {
-		List<String> strings = Arrays.asList(inputstring.split(" "));
-		TreeMap<String,Integer> tm = new TreeMap<String,Integer>();
+	public static String handleWordTable(HashMap<String, Integer> worldtable, String inputstring) {
+		List<String> strings = Arrays.asList(inputstring.replace(" ", "").split(""));
+		StringBuilder result = new StringBuilder();
+		HashMap<String, Integer> tm = worldtable;
 	    for(int i = 0 ; i<strings.size() ; i++){
 	        String string = strings.get(i);
 	        if(tm.containsKey(string)){
@@ -19,6 +20,7 @@ public class NewWordTable{
 	        }
 	        else{
 	            tm.put(string, 1);
+	            result.append(string + " ");
 	        }
 	    }
 	    String ret = "";
@@ -29,8 +31,8 @@ public class NewWordTable{
      		String k = map.getKey();
      		ret += k + " ";
      		int v = map.getValue();
-     		System.out.println(k+"("+v+")  ");
+     		//System.out.println(k+"("+v+")  ");
      	}
-		return ret;
+		return result.toString();
 	}
 }
