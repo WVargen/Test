@@ -1,7 +1,10 @@
 package testRec;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,44 +12,61 @@ public class testWordMatch {
 	static Pattern pattern_content = Pattern.compile("([一二三四五六七八九]\\s*\\、).*?");
 	static Pattern pattern_num = Pattern.compile("([0-9]\\s*\\.*\\、\\s*).*?([0-9]\\s*\\.*\\、\\s*)");
 	
-	public static String getPattern(String str, String pattern)
+	public static Map<String, String> getPattern(String str, String pattern)
     {
+		int start = 0;
+		List<String> titles = new ArrayList<>();
+		List<Integer> startwith = new ArrayList<>();
+		Map<String, String> piece = new LinkedHashMap<>();
+		
     	Pattern p = Pattern.compile(pattern);
 		Matcher m = p.matcher(str);
-		int index = 0;
-		while(m.find())
+
+		while(m.find(start))
 		{
 			try
 			{
-				index ++;
-				System.out.println(index);
-				//return m.group(1);	
-			}
-			catch (Exception e)
-			{
-				
+				String title = m.group(1);
+				startwith.add(m.start());
+				start = m.end();
+				//System.out.println("start with" + startwith.get(index));
+				titles.add(title);
+			}catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
 			}
 		}
-		
-		return null;
+		startwith.add(str.length());
+		for (int i = 0; i < titles.size(); i++) {
+			String content = str.substring(startwith.get(i) + titles.get(i).length(), startwith.get(i+1));
+			piece.put(titles.get(i), content);
+		}
+		//System.out.println(piece);
+		return piece;
     }
 	
 	
-	public static List<String[]> matchWord(String inputpath) {
-		List<String []> datas = new ArrayList<>();
+	public static List<String> matchWord(String inputdoc) {
+		Map<String, String> datas = new LinkedHashMap<>();
     	
-		String read_doc = WordUtil.readDataDocx(inputpath);//.replace("\n", "");
-		System.out.println("frank 正则切割" + getPattern(read_doc, "(\\n[一二三四五六七八九][、.]{1}[\\s\\S]*?)\\n"));
+		String read_doc = inputdoc;//.replace("\n", "");
+		datas = getPattern(read_doc, "\\n([一二三四五六七八九][、.]{1}[\\s\\S]*?\\n)");
 		
-//    	Matcher matcher_content = pattern_content.matcher(read_doc);
-//    	String rdoc_content = matchBegin(matcher_content, read_doc);
+		Map<String, String> data = new LinkedHashMap<>();
+		
+		for (String key : datas.keySet()) {
+		    String value = datas.get(key);
+		    data = getPattern(value, "(\\n[0-9]{1,2}[、.]+)[\\s\\S]*?\\n");
+		    System.out.println(data);
+		}
+//		datas = getPattern(read_doc, "\\n([一二三四五六七八九][、.]{1}[\\s\\S]*?)\\n+([一二三四五六七八九][、.]{1})");
+//		System.out.println("frank 正则切割" + getPattern(read_doc, "\\n([一二三四五六七八九][、.]{1}[\\s\\S]*?)\\n"));
+		
 //    	
 //    	String regex_title = "[一二三四五六七八九]\\s*\\、\\s*[\u0391-\uFFE5]{1,6}\n*";
 //    	String regex_num = "[0-9]+?\\s*\\、+\\s*\n*";
-//    	String[] arr = rdoc_content.split(regex_title);
 		
-		
-//		
+		//		
 //    	for (String s : arr) {
 //    		if (s.isEmpty())continue;
 //    		String[] data = s.split(regex_num);
@@ -60,7 +80,7 @@ public class testWordMatch {
 //            	System.out.println("============"+d);
 //            }
 //        }		
-		return datas;
+		return null;
 		
 	}
 	
