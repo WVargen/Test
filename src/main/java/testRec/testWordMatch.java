@@ -1,12 +1,16 @@
 package testRec;
 
+import java.nio.file.attribute.FileOwnerAttributeView;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.poi.util.TempFile;
 
 public class testWordMatch {
 	static Pattern pattern_content = Pattern.compile("([一二三四五六七八九]\\s*\\、).*?");
@@ -46,41 +50,80 @@ public class testWordMatch {
     }
 	
 	
-	public static List<String> matchWord(String inputdoc) {
+	public static List<String[]> matchWord(String inputdoc) {
 		Map<String, String> datas = new LinkedHashMap<>();
     	
 		String read_doc = inputdoc;//.replace("\n", "");
 		datas = getPattern(read_doc, "\\n([一二三四五六七八九][、.]{1}[\\s\\S]*?\\n)");
 		
-		Map<String, String> data = new LinkedHashMap<>();
-		
+		List<String []> output = new ArrayList<>(); 
 		for (String key : datas.keySet()) {
-		    String value = datas.get(key);
-		    data = getPattern(value, "(\\n[0-9]{1,2}[、.]+)[\\s\\S]*?\\n");
-		    System.out.println(data);
+			String cells [] = new String[10];
+			List<String> temp = new ArrayList<>();
+			if(key.contains("单项选择")){
+			    String value = datas.get(key);
+			    String que_pattern = "\\n([0-9]{1,2}[、.]{1}[\\s\\S]*?)\\n+\\s*A[、]{1}";
+			    String opt_pattern = "\\s+[A-Za-z]{1}[、.]{1}\\s*";
+			    Map<String, String> questions = getPattern(value, que_pattern);
+			    for(String question:questions.keySet()){
+					cells = null;
+					temp.clear();
+			    	temp.add(question.substring(0, question.indexOf("、")));
+			    	temp.add("1");
+			    	temp.add(question.substring(question.indexOf("、")+1, question.length()-1));
+			    	String options = questions.get(question).substring(4);
+			    	temp.addAll(Arrays.asList(options.split(opt_pattern)));
+				    cells = temp.toArray(new String[temp.size()]);
+				    output.add(cells);
+			    }
+
+			}
+			else if (key.contains("完形填空")) {
+				String value = datas.get(key);
+			    String que_pattern = "\\n([0-9]{1,2}[、.]{1}[\\s\\S]*?)\\n+\\s*1[、.]{1}";
+			    String opts_pattern = "\\s+[1-9]{1}[、.]{1}\\s*";
+			    String opt_pattern = "\\s+[0-9]{0,2}[、.]{0,1}[A-Za-z]+[、.]{1}\\s+";
+			    Map<String, String> questions = getPattern(value, que_pattern);
+			    for(String question:questions.keySet()){
+					cells = null;
+					temp.clear();
+					String article = question.substring(question.indexOf("、")+1, question.length()-1);
+					temp.add(question.substring(0, question.indexOf("、")));
+					temp.add("3");
+					temp.add(article);
+					
+					String [] options = questions.get(question).substring(4).split(opts_pattern);
+					String [] option = options[0].split(opt_pattern);
+					for (int i = 0; i < option.length; i++) {
+						if(option[i] != null && !option[i].isEmpty())temp.add(option[i]);
+						System.out.println(option[i]);
+					}
+					cells = temp.toArray(new String[temp.size()]);
+				    output.add(cells);
+				    
+			    	for (int i = 1; i < options.length; i++) {
+			    		temp.clear();
+			    		temp.add(question.substring(0, question.indexOf("、")));
+			    		temp.add("3");
+			    		temp.add("");
+				    	String [] que_options = options[i].split(opt_pattern);
+						for (int opts = 0; opts < que_options.length; opts++) {
+							if(que_options[opts] != null && !que_options[opts].isEmpty())temp.add(que_options[opts]);
+							System.out.println(que_options[opts]);
+						}
+						cells = temp.toArray(new String[temp.size()]);
+					    output.add(cells);
+					}
+			    	
+				    cells = temp.toArray(new String[temp.size()]);
+				    output.add(cells);
+			    }
+			}
+
+		    //System.out.println(data);
 		}
-//		datas = getPattern(read_doc, "\\n([一二三四五六七八九][、.]{1}[\\s\\S]*?)\\n+([一二三四五六七八九][、.]{1})");
-//		System.out.println("frank 正则切割" + getPattern(read_doc, "\\n([一二三四五六七八九][、.]{1}[\\s\\S]*?)\\n"));
-		
-//    	
-//    	String regex_title = "[一二三四五六七八九]\\s*\\、\\s*[\u0391-\uFFE5]{1,6}\n*";
-//    	String regex_num = "[0-9]+?\\s*\\、+\\s*\n*";
-		
-		//		
-//    	for (String s : arr) {
-//    		if (s.isEmpty())continue;
-//    		String[] data = s.split(regex_num);
-//        	List<String> dList = new ArrayList<>();
-//        	for (String d:data) {
-//				if (d.isEmpty())continue;
-//				dList.add(d);
-//			}
-//        	datas.add(dList.toArray(new String [dList.size()])); 
-//            for(String d:data){
-//            	System.out.println("============"+d);
-//            }
-//        }		
-		return null;
+
+		return output;
 		
 	}
 	

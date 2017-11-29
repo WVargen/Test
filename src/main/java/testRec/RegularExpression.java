@@ -18,15 +18,18 @@ import java.util.regex.Pattern;
 public class RegularExpression
 {
     public static void main( String[] args ){
-    	String inputpath_doc = "C:/Users/hp/Desktop/test/2017年广东中考英语.docx";
-    	String outputpath_doc = "C:/Users/hp/Desktop/test/2.xlsx";
+    	String inputpath_doc = "C:/Users/Vargen/Desktop/test/2017年广东中考英语.docx";
+    	String outputpath_doc = "C:/Users/Vargen/Desktop/test/2.xlsx";
     	File docfile = new File(outputpath_doc);
     	
     	//word文档部分
     	String doc_read = WordUtil.readDataDocx(inputpath_doc);
-    	List<String> doc_data = testWordMatch.matchWord(doc_read);
+    	List<String []> doc_data = new ArrayList<>();
+    	String [] title = {"uuid","type","question","a","b","c","d","answer","explain"};
+    	doc_data.add(title);
+    	doc_data.addAll(testWordMatch.matchWord(doc_read));
     	//System.out.println(doc_data);
-    	//testJDBC.ExcelUtils.WriteToFile(docfile, dox_data);
+    	testJDBC.ExcelUtils.WriteToFile(docfile, doc_data);
     	
     	
     	System.out.println("complete！");
