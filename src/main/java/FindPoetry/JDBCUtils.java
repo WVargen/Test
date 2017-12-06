@@ -51,22 +51,16 @@ public class JDBCUtils{
 	    }
 	    return i;
 	}
-	public <T> List<T> querySql(String sql, Class<T> cls){
+	public static <T> List<T> querySql(String sql, Class<T> cls) throws Exception{
 		Connection connection = getConn();
-		List<T> list = new ArrayList<T>();  
-	    int index = 1;  
-	    PreparedStatement pstmt = connection.prepareStatement(sql);  
-	    	if(params != null && !params.isEmpty()){  
-	    		for(int i = 0; i<params.size(); i++){  
-	    		pstmt.setObject(index++, params.get(i));  
-	    	}  
-	    }  
+		List<T> list = new ArrayList<T>();   
+	    PreparedStatement pstmt = connection.prepareStatement(sql);   
 	    ResultSet resultSet = pstmt.executeQuery();  
 	    ResultSetMetaData metaData  = resultSet.getMetaData();  
 	    int cols_len = metaData.getColumnCount();  
 	    while(resultSet.next()){  
 	    	//通过反射机制创建一个实例  
-	    	T resultObject = cls.newInstance();  
+	    	T resultObject = cls.newInstance();
 	    	for(int i = 0; i<cols_len; i++){  
 	    		String cols_name = metaData.getColumnName(i+1);  
 	    		Object cols_value = resultSet.getObject(cols_name);  
