@@ -28,6 +28,8 @@ public class FindPoetry{
    	    String sql = "select * from chinese_unit_sh";
    	 	DataList = JDBCUtils.querySql(sql, cls);
    	 	
+   	 	String resource[][] = ExcelUtils.ReadFromFile(path+"古诗词资源.xlsx");
+   	 	System.out.println(resource);
    	 	List<String []> databean = new ArrayList<String []>();
    	 	for (int i = 0; i < DataList.size(); i++) {
    	 		Map<String, String> data = BeanUtils.getFieldValueMap(DataList.get(i));
@@ -39,7 +41,7 @@ public class FindPoetry{
    	 		data.put("ext_chengyu",chengyu);
    	 		
    	 		name_temp = name;
-   	 		name ="古文" + data.get("_id") + "_" + data.get("course") + "_" + data.get("bookid") + ".xlsx";
+   	 		name = data.get("_id") + "_" + data.get("course") + "_" + data.get("bookid") + ".xlsx";
 	   	 	
    	 	
    	 		//chinese_unit_test cUnit_test = new chinese_unit_test();
@@ -58,7 +60,7 @@ public class FindPoetry{
    	 		String record[] = recordList.toArray(new String[recordList.size()]);
    	 		databean.add(record);
 	   	 	}
-	        ExcelUtils.WriteToFile(file, databean);	 
+	        ExcelUtils.WriteToFile(file,"Test", databean);	 
    	 	}
         System.out.println("complete！");
 	}

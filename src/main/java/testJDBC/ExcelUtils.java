@@ -24,13 +24,18 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 public class ExcelUtils {
 
-	public static void WriteToFile(File file, List<String[]> datas)
+	public static void WriteToFile(File file, String sheetname,List<String[]> datas)
 	{
 		ArrayList<String[]> bean = new ArrayList<String[]>();
 		bean.addAll(datas);
 		
 		XSSFWorkbook wb = new XSSFWorkbook();
-    	XSSFSheet sheet = wb.createSheet("Test");
+		XSSFSheet sheet = null;
+		if (wb.getSheet(sheetname) == null) {
+			 sheet = wb.createSheet(sheetname);
+		}else{
+			 sheet = wb.getSheet(sheetname);
+		}
     	
     	XSSFFont font = wb.createFont();
     	font.setFontName("Verdana");
