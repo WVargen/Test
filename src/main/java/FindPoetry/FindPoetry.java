@@ -16,14 +16,14 @@ public class FindPoetry{
 		
 		List<String []> databean = new ArrayList<String []>();
 		
-		String username = "root";
-    	String password = "123456";
+		
    	 	String path = "C:/Users/hp/Desktop/test/";
    	 	String name = "";
    	 	String name_temp = "";
    	 	File file = null;
-    	Connection conn = JDBCOperation.getConn(username,password);
-        ResultSet rSet = JDBCOperation.getAll(conn);
+   	 	
+    	
+        ResultSet rSet = JDBCUtils.getAll(conn,"select * from chinese_unit_sh");
         chinese_unit_test cUnit_test = new chinese_unit_test();
         
         //BeanUtils.getFieldValueMap(cUnit_test);

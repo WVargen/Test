@@ -44,8 +44,8 @@ public class JDBCOperation {
 	    return i;
 	}
 		
-	public static ResultSet getAll(Connection conn) throws SQLException {
-	    String sql = "select * from chinese_unit_sh";
+	public static ResultSet getAll(Connection conn,String sqlstring) throws SQLException {
+	    String sql = sqlstring;
 	    PreparedStatement pstmt;
 	    pstmt = conn.prepareStatement(sql);
 	    ResultSet rs = pstmt.executeQuery();  

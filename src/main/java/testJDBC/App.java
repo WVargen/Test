@@ -25,7 +25,7 @@ public class App
    	 	String name_temp = "";
    	 	File file = null;
     	Connection conn = JDBCOperation.getConn(username,password);
-        ResultSet rSet = JDBCOperation.getAll(conn);
+        ResultSet rSet = JDBCOperation.getAll(conn,"select * from chinese_unit_sh");
         chinese_unit_test cUnit_test = null;
         //name = "句型_小韦.xlsx";
         //ExcelUtils.ReadFromFile(path+name);
