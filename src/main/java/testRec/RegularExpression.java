@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import testJDBC.ExcelUtils;
+
 public class RegularExpression
 {
     public static void main( String[] args ){
@@ -29,7 +31,7 @@ public class RegularExpression
     	doc_data.add(title);
     	doc_data.addAll(testWordMatch.matchWord(doc_read));
     	//System.out.println(doc_data);
-    	testJDBC.ExcelUtils.WriteToFile(docfile, doc_data);
+    	ExcelUtils.WriteToFile(docfile,"1", doc_data);
     	
     	
     	System.out.println("complete！");

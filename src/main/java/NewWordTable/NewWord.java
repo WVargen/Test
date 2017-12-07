@@ -9,90 +9,62 @@ import java.util.List;
 import java.util.Map;
 
 import FindPoetry.BeanUtils;
+import FindPoetry.JDBCUtils;
+import FindPoetry.chinese_unit_test;
 import testJDBC.ExcelUtils;
 import testJDBC.JDBCOperation;
 import testJDBC.Utils;
 
 public class NewWord{
 	public static void main( String[] args ) throws Exception {
-		
-		List<String []> databean = new ArrayList<String []>();
-		
-		String username = "root";
-    	String password = "123456";
-   	 	String path = "C:/Users/hp/Desktop/test/";
-   	 	String name = "";
-   	 	String name_temp = "";
+		String path = "C:/Users/vargen/Desktop/test/生字表";
+   	 	String name = "",name_temp = "";
    	 	File file = null;
-    	Connection conn = JDBCOperation.getConn(username,password);
-        ResultSet rSet = JDBCOperation.getAll(conn);
-        chinese_unit_test cUnit_test = new chinese_unit_test();
-        
-        //BeanUtils.getFieldValueMap(cUnit_test);
-        
-        Map<String, String> valueMap = new HashMap<>();
-        Map<String, String> resultMap = new HashMap<>();
-        HashMap<String, Integer> worldtable = new HashMap<>();
-        String kString = null;
-        String vString = null;
-        List<String> nameList = BeanUtils.getNamelist(cUnit_test,false);
-        List<String> chinameList = BeanUtils.getNamelist(cUnit_test, true);
-        //System.out.println(nameList);
-        while(rSet.next()){
+   	 	
+   	 	List<chinese_unit_test> DataList = new ArrayList<chinese_unit_test>();
+   	    Class<chinese_unit_test> cls = chinese_unit_test.class;
+   	    String sql = "select * from chinese_unit_sh";
+   	 	DataList = JDBCUtils.querySql(sql, cls);
+   	    HashMap<String, Integer> wordtable = new HashMap<>();
         	
-        	for(int i = 0;i<rSet.getMetaData().getColumnCount();i++){
-        		kString = nameList.get(i);
-        		//System.out.println(kString);
-                vString = rSet.getString(i+1);
-                //System.out.println(vString);
-                valueMap.put(kString, vString);
-            }
-        	//System.out.println(valueMap);
-        	
-        	BeanUtils.setFieldValue(cUnit_test, valueMap);
-        	String read = Utils.ParseJson(rSet.getString(10));
-       	 	String cizu = Utils.ParseJson(rSet.getString(11));
-       	 	
-        	if (read == null || read.isEmpty()){
-        		//System.out.println(cUnit_test.get_id() + cUnit_test.getBookid());
-        		read = NewWordTable.handleWordTable(worldtable,cizu);
-        	}
-        	
-       	 	String chengyu = Utils.ParseJson(rSet.getString(15));
-       	 
-       	 	cUnit_test.setRead(read);
-       	 	cUnit_test.setCizu(cizu);
-       	 	cUnit_test.setExt_chengyu(chengyu);
-       	 	
-        	name_temp = name;
-        	name = cUnit_test.get_id() + "_" + cUnit_test.getCourse() + "_"
-        			 + cUnit_test.getBookid() + ".xlsx";
-        	 
-        	resultMap = BeanUtils.getFieldValueMap(cUnit_test);
-        	
-        	List<String> v = new ArrayList<>();
-        	List<String> chinamelist_edit = new ArrayList<>();
-        	for (int i = 0; i < nameList.size(); i++) {
-        		List<Boolean> editable = BeanUtils.getEditable(cUnit_test);
-        		if (editable.get(i)) {
-					chinamelist_edit.add(chinameList.get(i));
-    				String k = nameList.get(i);
-    				v.add(resultMap.get(k));
-				}else {
-
-				}	
+   	 	List<String []> databean = new ArrayList<String []>();
+   	 	for (int i = 0; i < DataList.size(); i++) {
+   	 		Map<String, String> data = BeanUtils.getFieldValueMap(DataList.get(i));
+   	 		String read = Utils.ParseJson(data.get("read"));
+   	 		String cizu = Utils.ParseJson(data.get("cizu"));
+   	 		String chengyu = Utils.ParseJson(data.get("ext_chengyu"));
+   	 		
+   	 		if (read == null || read.isEmpty()){
+	    		//System.out.println(cUnit_test.get_id() + cUnit_test.getBookid());
+	    		read = NewWordTable.handleWordTable(wordtable,cizu);
+	    	}
+   	 		
+   	 		data.put("read", read);
+   	 		data.put("cizu", cizu);
+   	 		data.put("ext_chengyu",chengyu);
+   	 		
+   	 		name_temp = name;
+   	 		name = data.get("_id") + "_" + data.get("course") + "_" + data.get("bookid") + ".xlsx";
+	   	 	
+   	 		//chinese_unit_test cUnit_test = new chinese_unit_test();
+   	 		List<String> recordList = new ArrayList<>();
+   	 		String nameList[] = {"_id","course","bookid","name","kewenAuthor","lession","type","read","cizu","ext_chengyu"};
+	   	 	if (!name.equalsIgnoreCase(name_temp)) {
+	   	 		file = Utils.createFile(path,name);
+	   	 		databean.clear();
+	   	 		databean.add(nameList);
+	   	 		System.out.println("file path:" + file);
 			}
+	   	 	
+	   	 		for (String colume:nameList){
+	   	 			recordList.add(data.get(colume));
+	   	 		}
+   	 		String record[] = recordList.toArray(new String[recordList.size()]);
+   	 		databean.add(record);
+	   	 	
+	        ExcelUtils.WriteToFile(file,"Test", databean);	 
+   	 	}
 
-            databean.add(v.toArray(new String[v.size()]));
-       	
-        	if (!name.equalsIgnoreCase(name_temp)) {
-        		file = Utils.createFile(path,name);
-        		databean.clear();
-        		databean.add(chinamelist_edit.toArray(new String[chinamelist_edit.size()]));
-        		System.out.println("file path:" + file);
-			}
-        	ExcelUtils.WriteToFile(file, databean);	 
-        }
         System.out.println("complete！");
 	}
 	
