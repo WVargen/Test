@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.liangli.nj.utils.WordUtil;
+import com.liangli.nj.utils.ExcelUtils;
 
-import testJDBC.ExcelUtils;
 
 public class RegularExpression
 {
@@ -32,8 +32,8 @@ public class RegularExpression
 //    	//System.out.println(doc_data);
 //    	ExcelUtils.WriteToFile(docfile,"1", doc_data);
     	
-    	String inputpath_doc = "C:/Users/Vargen/Desktop/test/句型.docx";
-    	String outputpath_doc = "C:/Users/Vargen/Desktop/test/句型.xlsx";
+    	String inputpath_doc = "C:/Users/Vargen/Desktop/test/句型.xlsx";
+    	String outputpath_doc = "C:/Users/Vargen/Desktop/test/句型match.xlsx";
     	File xlsfile = new File(outputpath_doc);
     	
     	String[][] xls_read = ExcelUtils.ReadFromFile(inputpath_doc);
@@ -42,7 +42,7 @@ public class RegularExpression
     	xls_data.add(title);
     	xls_data.addAll(testXlsMatch.matchxls(xls_read));
     	
-    	ExcelUtils.WriteToFile(xlsfile,"1", xls_data);
+    	//ExcelUtils.WriteToFile(xlsfile,"1", xls_data);
     	System.out.println("complete！");
     }
 }
