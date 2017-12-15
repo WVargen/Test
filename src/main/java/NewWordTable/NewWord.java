@@ -1,8 +1,6 @@
 package NewWordTable;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +10,6 @@ import FindPoetry.BeanUtils;
 import FindPoetry.JDBCUtils;
 import FindPoetry.chinese_unit_test;
 import testJDBC.ExcelUtils;
-import testJDBC.JDBCOperation;
 import testJDBC.Utils;
 
 public class NewWord{

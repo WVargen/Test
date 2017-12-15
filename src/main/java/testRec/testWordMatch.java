@@ -1,16 +1,13 @@
 package testRec;
 
-import java.nio.file.attribute.FileOwnerAttributeView;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.util.TempFile;
 
 public class testWordMatch {
 	static Pattern pattern_content = Pattern.compile("([一二三四五六七八九]\\s*\\、).*?");
