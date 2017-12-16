@@ -32,13 +32,14 @@ public class RegularExpression
 //    	//System.out.println(doc_data);
 //    	ExcelUtils.WriteToFile(docfile,"1", doc_data);
     	
-    	String inputpath_doc = "C:/Users/Vargen/Desktop/test/句型.xlsx";
-    	String outputpath_doc = "C:/Users/Vargen/Desktop/test/句型match.xlsx";
+    	String inputpath_doc = "C:/Users/hp/Desktop/test/句型.xlsx";
+    	String outputpath_doc = "C:/Users/hp/Desktop/test/句型match.xlsx";
     	File xlsfile = new File(outputpath_doc);
     	
     	String[][] xls_read = ExcelUtils.ReadFromFile(inputpath_doc);
     	List<String []> xls_data = new ArrayList<>();
-    	String [] title = {"uuid","type","question","a","b","c","d","answer","explain"};
+    	String [] title = {"_id","course","bookid","unitid","unitidorder","name",
+    			"uuid","type","question","a","b","c","d","answer","explain","grammerid"};
     	xls_data.add(title);
     	xls_data.addAll(testXlsMatch.matchxls(xls_read));
     	
