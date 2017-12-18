@@ -1,7 +1,7 @@
 package com.liangli.nj.bean;
 
 public class SentenceBean {
-	Integer uuid;
+	String queuuid;
 	String questions;
 	String answer;
 	
@@ -9,18 +9,18 @@ public class SentenceBean {
 		super();
 	}
 	
-	public SentenceBean(Integer uuid, String questions, String answer) {
+	public SentenceBean(String queuuid, String questions, String answer) {
 		super();
-		this.uuid = uuid;
+		this.queuuid = queuuid;
 		this.questions = questions;
 		this.answer = answer;
 	}
 	
-	public Integer getUuid() {
-		return uuid;
+	public String getQueuuid() {
+		return queuuid;
 	}
-	public void setUuid(Integer uuid) {
-		this.uuid = uuid;
+	public void setQueuuid(String queuuid) {
+		this.queuuid = queuuid;
 	}
 	public String getQuestions() {
 		return questions;

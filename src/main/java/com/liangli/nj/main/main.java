@@ -4,90 +4,103 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.liangli.nj.bean.*;
-import com.liangli.nj.utils.*;
+import com.liangli.nj.bean.FileBean;
+import com.liangli.nj.bean.chinese_unit;
+import com.liangli.nj.database.DatabaseAccessor;
+import com.liangli.nj.table.NewWordTable;
+import com.liangli.nj.utils.Definition;
+import com.liangli.nj.utils.ExcelUtils;
+import com.liangli.nj.utils.FileUtils;
+import com.liangli.nj.utils.Strings;
+import com.liangli.nj.utils.Utils;
+import com.liangli.nj.utils.WordUtil;
 
-import NewWordTable.NewWordTable;
-import testRec.RegularExpression;
 import testRec.testWordMatch;
 
 public class main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		System.out.println("frank aa:");
 		
 		//导出数据库数据，同时生成生字
 		try {
-//			exportChineseBooks2ExcelAndGenerateNewwords();
+			exportChineseBooks2ExcelAndGenerateNewwords();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		//word抓取程序
-		fetchEnglishGrammarFromWordFile();		
+//		fetchEnglishGrammarFromWordFile();		
 	}
 	
 	private static void exportChineseBooks2ExcelAndGenerateNewwords() throws Exception
 	{
-		String path = NewWordTable.class.getClassLoader().getResource("NewWordTable").getPath()+"/generatefiles/";
-		//String path = "C:/Users/hp/Desktop/test/古诗+生字表/生字表";
-   	 	String name = "",name_temp = "";
+		String path = Definition.getClassPath() + "/NewWordTable/generatefiles/";
+   	 	String filename = "", lastFilename = "";
    	 	File file = null;
    	 	
-   	 	List<chinese_unit_test> DataList = new ArrayList<chinese_unit_test>();
-   	    Class<chinese_unit_test> cls = chinese_unit_test.class;
-   	    String sql = "select * from chinese_unit_sh";
-   	 	DataList = JDBCUtils.querySql(sql, cls);
+   	 	Definition.printSqlInConsol = true;   	 	
+   	 	List<chinese_unit> dataList = DatabaseAccessor.get().getSelect()
+   	 			.select(chinese_unit.class)
+   	 			.where("course=?", "yw沪教版小学")
+   	 			.orderBy("bookid asc")
+   	 			.find(chinese_unit.class);
+   	 	
    	    HashMap<String, Integer> wordtable = new HashMap<>();
         	
-   	 	List<String []> databean = new ArrayList<String []>();
-   	 	for (int i = 0; i < DataList.size(); i++) {
-   	 		Map<String, String> data = BeanUtils.getFieldValueMap(DataList.get(i));
-   	 		String read = Utils.ParseJson(data.get("read"));
-   	 		String cizu = Utils.ParseJson(data.get("cizu"));
-   	 		String chengyu = Utils.ParseJson(data.get("ext_chengyu"));
+   	 	List<String[]> databean = new ArrayList<String[]>();
+   	 	
+   	 	for (int i = 0; i < dataList.size(); i++) 
+   	 	{
+   	 		chinese_unit data = dataList.get(i);
+   	 		String read = Utils.ParseJson(data.getRead());
+   	 		String cizu = Utils.ParseJson(data.getCizu());
+   	 		String chengyu = Utils.ParseJson(data.getExt_chengyu());
    	 		
-   	 		if (read == null || read.isEmpty()){
+   	 		if (Strings.isEmpty(read)){
 	    		read = NewWordTable.handleWordTable(wordtable,cizu);
 	    	}
    	 		
-   	 		data.put("read", read);
-   	 		data.put("cizu", cizu);
-   	 		data.put("ext_chengyu",chengyu);
-   	 		
-   	 		name_temp = name;
-   	 		name = "生字表"+data.get("_id") + "_" + data.get("course") + "_" + data.get("bookid") + ".xlsx";
+   	 		lastFilename = filename;
+   	 		filename = "生字表" + data.get_id() + "_" + data.getCourse() + "_" + data.getBookid() + ".xlsx";
 	   	 	
-   	 		List<String> recordList = new ArrayList<>();
-   	 		String nameList[] = {"_id","course","bookid","name","kewenAuthor","lession","type","read","cizu","ext_chengyu"};
-	   	 	if (!name.equalsIgnoreCase(name_temp)) {
-	   	 		file = Utils.createFile(path,name);
+   	 		String nameList[] = {"_id","course","bookid","单元", "序号", "课文名","作者", "type","识字表","写字表","词组","成语"};
+	   	 	
+   	 		if (!filename.equalsIgnoreCase(lastFilename)) {
+	   	 		file = Utils.createFile(path, filename);
 	   	 		databean.clear();
 	   	 		databean.add(nameList);
 	   	 		System.out.println("file path:" + file);
 			}
 	   	 	
-	   	 		for (String colume:nameList){
-	   	 			recordList.add(data.get(colume));
-	   	 		}
-   	 		String record[] = recordList.toArray(new String[recordList.size()]);
-   	 		databean.add(record);
+   	 		databean.add(new String[]{
+	   	 			data.get_id() + ""
+	   	 			, data.getCourse()
+	   	 			, data.getBookid() + ""
+	   	 			, data.getUnit()
+	   	 			, data.getLession()
+	   	 			, data.getName()
+	   	 			, data.getKewenAuthor()
+	   	 			, data.getType() + ""
+	   	 			, read
+	   	 			, ""
+	   	 			, cizu
+	   	 			, chengyu
+	   	 	});
 	   	 	
 	        ExcelUtils.WriteToFile(file,"Test", databean);	 
    	 	}
 
-        System.out.println("match complete！");
+        System.out.println("complete！");
 	}
 	
 	//Map<String, QuestionBean>
 	private static void fetchEnglishGrammarFromWordFile()
 	{
 		//文件生成在target/classes/testRect目录下的
-    	String scanFolder = RegularExpression.class.getClassLoader().getResource("testRec").getPath();
+    	String scanFolder = Definition.getClassPath() + "/testRec";
     	File folder = new File(scanFolder);
     	
     	List<FileBean> tasks = new ArrayList<>();
