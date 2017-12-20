@@ -102,7 +102,7 @@ public class testXlsMatch{
 			
 			int i = 0;
 			List<String> answerTemp = Arrays.asList(answer.get(st).split("\\|"));
-			System.out.println(answerTemp);
+			//System.out.println(answerTemp);
 			
 			for (String ct : ContentTemp.keySet()) {
 				SentenceBean sentenceBean = new SentenceBean();

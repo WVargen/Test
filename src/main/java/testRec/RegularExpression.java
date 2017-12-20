@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.liangli.nj.utils.WordUtil;
+import com.liangli.nj.utils.DeviceUtils.file;
 import com.liangli.nj.utils.ExcelUtils;
 
 
@@ -32,10 +33,15 @@ public class RegularExpression
 //    	//System.out.println(doc_data);
 //    	ExcelUtils.WriteToFile(docfile,"1", doc_data);
     	
+
     	String inputpath_doc = "C:/Users/vargen/Desktop/test/句型.xlsx";
     	String outputpath_doc = "C:/Users/vargen/Desktop/test/句型match.xlsx";
     	File xlsfile = new File(outputpath_doc);
     	
+    	String inputFile = "C:/Users/vargen/Desktop/test/生字表3.xlsx";
+    	
+    	String[][] xls_test = ExcelUtils.ReadFromFile(inputFile);
+    	System.out.println(xls_test);
     	String[][] xls_read = ExcelUtils.ReadFromFile(inputpath_doc);
     	List<String []> xls_data = new ArrayList<>();
     	String [] title = {"_id","course","bookid","unitid","unitidorder","name",
