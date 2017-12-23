@@ -6,11 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import FindPoetry.BeanUtils;
+import com.liangli.nj.utils.BeanUtils;
+import com.liangli.nj.bean.chinese_unit_test;
+import com.liangli.nj.utils.ExcelUtils;
+import com.liangli.nj.utils.Utils;
+
 import FindPoetry.JDBCUtils;
-import FindPoetry.chinese_unit_test;
-import testJDBC.ExcelUtils;
-import testJDBC.Utils;
 
 public class NewWord{
 	public static void main( String[] args ) throws Exception {

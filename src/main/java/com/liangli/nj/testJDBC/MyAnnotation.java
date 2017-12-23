@@ -1,4 +1,4 @@
-package testJDBC;
+package com.liangli.nj.testJDBC;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.annotation.RetentionPolicy;

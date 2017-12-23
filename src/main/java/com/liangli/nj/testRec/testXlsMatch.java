@@ -1,4 +1,4 @@
-package testRec;
+package com.liangli.nj.testRec;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,8 +53,7 @@ public class testXlsMatch{
 				default:
 					sentenceOutput.add(i, input[i]);
 				}					
-			}
-					
+			}	
 			output.add(sentenceOutput.toArray(new String[sentenceOutput.size()]));					
 		}
 		return output;
@@ -102,7 +101,6 @@ public class testXlsMatch{
 			
 			int i = 0;
 			List<String> answerTemp = Arrays.asList(answer.get(st).split("\\|"));
-			//System.out.println(answerTemp);
 			
 			for (String ct : ContentTemp.keySet()) {
 				SentenceBean sentenceBean = new SentenceBean();

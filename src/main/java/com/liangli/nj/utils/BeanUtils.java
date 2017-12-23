@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import testJDBC.MyAnnotation;
+import com.liangli.nj.testJDBC.MyAnnotation;
+
 
 public class BeanUtils{
     /**  

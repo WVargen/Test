@@ -9,30 +9,37 @@ import com.liangli.nj.bean.FileBean;
 import com.liangli.nj.bean.chinese_unit;
 import com.liangli.nj.database.DatabaseAccessor;
 import com.liangli.nj.table.NewWordTable;
+import com.liangli.nj.testRec.testWordMatch;
+import com.liangli.nj.testRec.testXlsMatch;
 import com.liangli.nj.utils.Definition;
+import com.liangli.nj.utils.DeviceUtils;
 import com.liangli.nj.utils.ExcelUtils;
 import com.liangli.nj.utils.FileUtils;
 import com.liangli.nj.utils.Strings;
 import com.liangli.nj.utils.Utils;
-import com.liangli.nj.utils.WordUtil;
 
-import testRec.testWordMatch;
+import com.liangli.nj.utils.WordUtil;
 
 public class main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		
+		String path = Definition.getClassPath() + "/testRec/aaa.html";
+		String s = new String(DeviceUtils.file.readFromFile(path));
+		//System.out.println("frank " + s);
 		//导出数据库数据，同时生成生字
 		try {
-			exportChineseBooks2ExcelAndGenerateNewwords();
+//			exportChineseBooks2ExcelAndGenerateNewwords();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		//word抓取程序
-//		fetchEnglishGrammarFromWordFile();		
+//		fetchEnglishGrammarFromWordFile();
+		
+		//匹配改句子
+		fetchSentenceMatch();
 	}
 	
 	private static void exportChineseBooks2ExcelAndGenerateNewwords() throws Exception
@@ -44,8 +51,8 @@ public class main {
    	 	Definition.printSqlInConsol = true;   	 	
    	 	List<chinese_unit> dataList = DatabaseAccessor.get().getSelect()
    	 			.select(chinese_unit.class)
-   	 			.where("course=?", "yw沪教版小学")
-   	 			.orderBy("bookid asc")
+   	 			.where("course=?", "yw人教版小学")
+//   	 			.orderBy("bookid asc, unit asc")
    	 			.find(chinese_unit.class);
    	 	
    	    HashMap<String, Integer> wordtable = new HashMap<>();
@@ -136,4 +143,37 @@ public class main {
     	}
 	}
 
+	private static void fetchSentenceMatch()
+	{
+		//文件生成在target/classes/testRect目录下的
+		String scanFolder = Definition.getClassPath() + "/testRec";;
+    	File folder = new File(scanFolder);
+    	
+    	List<FileBean> matchSentenceTasks = new ArrayList<>();
+    	for (String filename : folder.list())
+    	{
+    		if (FileUtils.checkFileFormat(filename, ".xlsx")) {
+    			 if (filename.equals("句型.xlsx")) {
+    				 String inputPath = scanFolder + "/" + filename;
+    	    			String outputPath = scanFolder + "/" + FileUtils.cutFileFormat(filename, ".xlsx")+ "match" + ".xlsx";
+    	    			matchSentenceTasks.add(new FileBean(inputPath, outputPath));
+				}	
+    		}
+    	}
+    	
+
+    	for (FileBean task : matchSentenceTasks) {
+			//句型匹配部分
+    		String[][] xls_read = ExcelUtils.ReadFromFile(task.getInputPath());
+	    	
+    		List<String []> xls_data = new ArrayList<>();
+        	String [] title = {"_id","course","bookid","unitid","unitidorder","name",
+        			"uuid","type","question","a","b","c","d","answer","explain","grammerid"};
+        	xls_data.add(title);
+        	xls_data.addAll(testXlsMatch.matchxls(xls_read));
+        	ExcelUtils.WriteToFile(new File(task.getOutputPath()),"1", xls_data);	
+	    	System.out.println("Match sentences complete！");
+		}
+	}
 }
+

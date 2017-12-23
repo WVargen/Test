@@ -1,21 +1,15 @@
 package FindPoetry;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.crypto.Data;
+import com.liangli.nj.utils.BeanUtils;
+import com.liangli.nj.bean.chinese_unit_test;
+import com.liangli.nj.utils.ExcelUtils;
+import com.liangli.nj.utils.Utils;
 
-import org.apache.poi.ddf.EscherBlipWMFRecord;
-
-import testJDBC.ExcelUtils;
-import testJDBC.JDBCOperation;
-import testJDBC.Utils;
 
 public class FindPoetry{
 	public static void main( String[] args ) throws Exception {
