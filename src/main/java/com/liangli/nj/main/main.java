@@ -1,6 +1,7 @@
 package com.liangli.nj.main;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,9 +9,11 @@ import java.util.List;
 import com.liangli.nj.bean.FileBean;
 import com.liangli.nj.bean.chinese_unit;
 import com.liangli.nj.database.DatabaseAccessor;
+import com.liangli.nj.mathmethod.MathPlus;
 import com.liangli.nj.table.NewWordTable;
 import com.liangli.nj.testRec.testWordMatch;
 import com.liangli.nj.testRec.testXlsMatch;
+import com.liangli.nj.utils.CountNumberOfRegistrations;
 import com.liangli.nj.utils.Definition;
 import com.liangli.nj.utils.DeviceUtils;
 import com.liangli.nj.utils.ExcelUtils;
@@ -39,7 +42,20 @@ public class main {
 //		fetchEnglishGrammarFromWordFile();
 		
 		//匹配改句子
-		fetchSentenceMatch();
+//		fetchSentenceMatch();
+		
+//		MathPlus.mathPlus();
+		
+		//计算人数
+		//System.out.println(CountNumberOfRegistrations.CountRegistrations(1514720419716L, 10000));
+		
+		//扫描目录导出excel
+		List<String[]> FilePathCatalog = FileUtils.scanFilePathCatalog("src/main/resources/test");
+		String pathname = Definition.getClassPath() + "/FilePathCatalog.xlsx";
+		System.out.println(pathname);
+		File file = new File(pathname);
+		ExcelUtils.WriteToFile(file,"Test", FilePathCatalog);
+
 	}
 	
 	private static void exportChineseBooks2ExcelAndGenerateNewwords() throws Exception
@@ -146,7 +162,7 @@ public class main {
 	private static void fetchSentenceMatch()
 	{
 		//文件生成在target/classes/testRect目录下的
-		String scanFolder = Definition.getClassPath() + "/testRec";;
+		String scanFolder = Definition.getClassPath() + "/testRec";
     	File folder = new File(scanFolder);
     	
     	List<FileBean> matchSentenceTasks = new ArrayList<>();
