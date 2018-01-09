@@ -11,6 +11,7 @@ import com.liangli.nj.bean.chinese_unit;
 import com.liangli.nj.database.DatabaseAccessor;
 import com.liangli.nj.mathmethod.MathPlus;
 import com.liangli.nj.table.NewWordTable;
+import com.liangli.nj.table.ReadEngGrammarVocbook;
 import com.liangli.nj.testRec.testWordMatch;
 import com.liangli.nj.testRec.testXlsMatch;
 import com.liangli.nj.utils.CountNumberOfRegistrations;
@@ -50,11 +51,13 @@ public class main {
 		//System.out.println(CountNumberOfRegistrations.CountRegistrations(1514720419716L, 10000));
 		
 		//扫描目录导出excel
-		List<String[]> FilePathCatalog = FileUtils.scanFilePathCatalog("src/main/resources/test");
-		String pathname = Definition.getClassPath() + "/FilePathCatalog.xlsx";
-		System.out.println(pathname);
-		File file = new File(pathname);
-		ExcelUtils.WriteToFile(file,"Test", FilePathCatalog);
+//		List<String[]> FilePathCatalog = FileUtils.scanFilePathCatalog("src/main/resources/test");
+//		String pathname = Definition.getClassPath() + "/FilePathCatalog.xlsx";
+//		System.out.println(pathname);
+//		File file = new File(pathname);
+//		ExcelUtils.WriteToFile(file,"Test", FilePathCatalog);
+		
+		ReadEngGrammarVocbook.readEngGrammarVocbook2Map();
 
 	}
 	
