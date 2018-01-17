@@ -122,8 +122,6 @@ public class ExcelUtils {
 		 Sheet sheet = wb.getSheetAt(0);
 		 int rowsize = sheet.getPhysicalNumberOfRows();
 		 int cellsize = sheet.getRow(0).getPhysicalNumberOfCells();
-		 System.out.println(rowsize);
-		 System.out.println(cellsize);
 		 String[][] content = new String[rowsize][cellsize];
 		 for (int index_x = 0; index_x < rowsize; index_x++) {
 			 Row row = sheet.getRow(index_x);

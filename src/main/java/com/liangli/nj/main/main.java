@@ -1,28 +1,31 @@
 package com.liangli.nj.main;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.liangli.nj.bean.FileBean;
 import com.liangli.nj.bean.chinese_unit;
 import com.liangli.nj.database.DatabaseAccessor;
-import com.liangli.nj.mathmethod.MathPlus;
+import com.liangli.nj.mathmethod.MathManager;
 import com.liangli.nj.table.NewWordTable;
-import com.liangli.nj.table.ReadEngGrammarVocbook;
+import com.liangli.nj.testRec.KnowledgePointRecognition;
 import com.liangli.nj.testRec.testWordMatch;
 import com.liangli.nj.testRec.testXlsMatch;
-import com.liangli.nj.utils.CountNumberOfRegistrations;
 import com.liangli.nj.utils.Definition;
 import com.liangli.nj.utils.DeviceUtils;
 import com.liangli.nj.utils.ExcelUtils;
 import com.liangli.nj.utils.FileUtils;
+import com.liangli.nj.utils.HttpUtils;
 import com.liangli.nj.utils.Strings;
 import com.liangli.nj.utils.Utils;
-
 import com.liangli.nj.utils.WordUtil;
+
 
 public class main {
 
@@ -48,17 +51,115 @@ public class main {
 //		MathPlus.mathPlus();
 		
 		//计算人数
-		//System.out.println(CountNumberOfRegistrations.CountRegistrations(1514720419716L, 10000));
+//		System.out.println(CountNumberOfRegistrations.CountRegistrations(1514720419716L, 10000, 1000));
 		
 		//扫描目录导出excel
-//		List<String[]> FilePathCatalog = FileUtils.scanFilePathCatalog("src/main/resources/test");
+//		//List<String[]> FilePathCatalog = FileUtils.scanFilePathCatalog("src/main/resources/test");
+//		List<String[]> FilePathCatalog = FileUtils.scanFilePathCatalog("F:/学习资料/研究生资料/春学期课件/智能优化算法课件");
 //		String pathname = Definition.getClassPath() + "/FilePathCatalog.xlsx";
 //		System.out.println(pathname);
 //		File file = new File(pathname);
 //		ExcelUtils.WriteToFile(file,"Test", FilePathCatalog);
-		
-		ReadEngGrammarVocbook.readEngGrammarVocbook2Map();
 
+		//数学
+//		try {
+//			MathManager.mathManager();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		//http工具 + 读取mp3信息
+//		String urlFile = main.class.getClassLoader().getResource("url.txt").getPath();
+//		String outputPath = Definition.getClassPath() + "/downloadFile/";
+//		List<String> urlPath = Arrays.asList(Utils.readStringFromFile(urlFile).split("\n"));
+//		HttpUtils.ReadUrlAndDownloadWithType(urlPath, outputPath, "mp3");
+
+		//读取englist_grammer_vocabulary_book
+//		String json = JSON.toJSONString(ReadEngGrammarVocbook.readGrammarBookSimpleMap("course<>? and course<>? and course<>?", "grammar_basic_primary", "grammar_basic_junior", "grammar_basic_senior"));
+//		System.out.println(json);
+		
+		//下载对应图片
+//		try {
+//			generateUrlAndDownloadImage();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		//知识点识别
+		String inputFilePath = Definition.getClassPath() + "/test.xlsx";
+		KnowledgePointRecognition.handleExerciseProblems(inputFilePath);
+	}
+	
+	private static void generateUrlAndDownloadImage() throws Exception {
+		String[][] readExcel = ExcelUtils.ReadFromFile(Definition.getClassPath() + "/彩色卡片15类.xlsx");
+		//String[][] readExcel = ExcelUtils.ReadFromFile(Definition.getClassPath() + "/test.xlsx");
+		int index = 0;
+		String outputPath = Definition.getClassPath() + "/downloadFile/";
+		//String outputPath = Definition.getClassPath() + "/downloadFileTest/";
+		for (int i = 0; i < readExcel[0].length; i++) {
+			if (readExcel[0][i].equals("word") || 
+				readExcel[0][i].equals("文件")) {
+				index = i;
+			}
+		}
+		List<String> downloadingWords = new ArrayList<>();
+		List<String> allWords = new ArrayList<>();
+		for (int i = 1; i < readExcel.length; i++) {
+			allWords.add(readExcel[i][index]);
+			
+			File file = null;
+			file = new File(outputPath + readExcel[i][index]);
+			
+			if (file.exists()) {
+				//System.out.println("文件" + readExcel[i][index] + "已存在.");
+			} else {
+				downloadingWords.add(readExcel[i][index]);
+			}
+		}
+		
+		HttpUtils.ReadUrl2Path(HttpUtils.generateUrl(downloadingWords), outputPath, downloadingWords);
+		FileInputStream inputStream = null;
+		int length;  
+        byte b[] = new byte[1024]; 
+        
+        Pattern setDataPattern = Pattern.compile("(app\\.setData\\s*\\('imgData'\\s*,\\s*)"
+        		+ "[\\s\\S]*?(\\);\\s*app.setData\\s*)");
+        Pattern thumbURLPattern = Pattern.compile("(\\\"thumbURL\\\":\\s*\\\").*?(\\\",)");
+        
+		for (String word : allWords) {
+			String fileFolder = Definition.getClassPath() + File.separator + "Image" + File.separator +  word;
+			//String fileFolder = Definition.getClassPath() + File.separator + "ImageTest" + File.separator +  word;
+			String fileStr = "", setDataStr = "";
+			
+			try {
+				inputStream = new FileInputStream(outputPath + word);
+				while ((length = inputStream.read(b)) != -1) {  
+					 fileStr += new String(b, 0, length);
+				}
+				Matcher matcher = setDataPattern.matcher(fileStr);
+			
+				if (matcher.find()) {
+					setDataStr = fileStr.substring(matcher.start() + matcher.group(1).length(), matcher.end() - matcher.group(2).length() - 1);	
+				}
+				
+				matcher = thumbURLPattern.matcher(setDataStr);
+				int start = 0;
+				List<String> urlStrList = new ArrayList<>();
+				
+				while (matcher.find(start)) {
+					start = matcher.end();
+					String setDataStrOk = setDataStr.substring(matcher.start() + matcher.group(1).length(), matcher.end() - matcher.group(2).length());
+					urlStrList.add(setDataStrOk);
+				}
+				HttpUtils.ReadUrlAndDownloadWithType(urlStrList, fileFolder, "jpg", true);
+			} catch (FileNotFoundException e) {
+				System.out.println("读取" + outputPath + word + "失败，没有该文件！");
+			}
+		}
+		inputStream.close();
+		System.out.println("\n\ncomplete！");
 	}
 	
 	private static void exportChineseBooks2ExcelAndGenerateNewwords() throws Exception
