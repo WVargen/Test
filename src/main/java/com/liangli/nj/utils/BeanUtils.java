@@ -9,7 +9,6 @@ import java.util.Map;
 
 import com.liangli.nj.testJDBC.MyAnnotation;
 
-
 public class BeanUtils{
     /**  
      * 取Bean的属性和值对应关系的MAP  

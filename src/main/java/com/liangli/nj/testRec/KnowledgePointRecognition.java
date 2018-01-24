@@ -11,142 +11,121 @@ import java.util.regex.Pattern;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.liangli.nj.bean.QuestionBean;
 import com.liangli.nj.utils.Definition;
 import com.liangli.nj.utils.ExcelUtils;
+import com.liangli.nj.utils.Strings;
+import com.mysql.jdbc.interceptors.ServerStatusDiffInterceptor;
 
 public class KnowledgePointRecognition {
-	final static String knowledgePointPath = Definition.getClassPath() + "/1-6年级英语知识点.xlsx";
-	final static int grammarIdColumn = 1;
+	final static String knowledgePointPath = Definition.getClassPath() + "/1-6年级英语知识点修改.xlsx";
+	
+	final static int grammarIdColumn         = 1;
+	final static int questionConditionColume = 11;
+	final static int answerConditionColume   = 12;
+	final static int answerExcludeColume     = 13;
+	final static int conditionIsAnswer       = 14;
+	
+	final static int questionColumn = 1;
+	final static int AColumn 		= 2;
+	final static int BColumn 		= 3;
+	final static int CColumn 		= 4;
+	final static int DColumn 		= 5;
+	final static int AnswerColumn 	= 6;
 	
 	public static void handleExerciseProblems(String inputFilePath) {
 		String[][] exerciseFile = ExcelUtils.ReadFromFile(inputFilePath);
-		int questionIndex = 0;
-		List<Integer> answerIndexList = new ArrayList<>();
-		for (int i = 0; i < exerciseFile[0].length; i++) {
-			String cell = exerciseFile[0][i];
-			if (cell.equals("question")) {			
-				questionIndex = i;
-			}else if (cell.equals("a")||cell.equals("b")||
-					  cell.equals("c")||cell.equals("d")) {
-				answerIndexList.add(i);
-			}
-		}
-		
-		for (int row = 1; row < exerciseFile.length; row++) {
-			
-			List<String> answerGrammarIDList = new ArrayList<>();
-			String questionStr = exerciseFile[row][questionIndex];
-			for (int i = 0; i < answerIndexList.size(); i++) {
-				String answer[] = exerciseFile[row][answerIndexList.get(i)].split(",");
-				List<String> grammarIDList = new ArrayList<>();
-				for (int answerIndex = 0; answerIndex < answer.length; answerIndex++) {
-					String grammarID = matchGrammarIdRow(questionStr, answer[answerIndex]);
-					if (!grammarIDList.contains(grammarID)) {
-						grammarIDList.add(grammarID);
-					}	
-				}
-				String grammarIdStr = "";
-				for (String str : grammarIDList) {
-					if (!str.isEmpty()) {
-						grammarIdStr += str + "|";
-					}
-				}
-				
-				while (grammarIdStr.contains("||")) {
-					grammarIdStr = grammarIdStr.replace("||", "");
-				}
-				answerGrammarIDList.add(grammarIdStr);
-			}
-			System.out.println(answerGrammarIDList);
-		}
-		System.out.println("complete!");
-	}
-	
-	private static String matchGrammarIdRow(String question, String answer) {
-		String[][] fileContent = ExcelUtils.ReadFromFile(knowledgePointPath);
-		
-		String grammarID = "";
-		List<Integer> grammarRowList = new ArrayList<>();
-		Map<Integer, JSONArray> answerMatchConditions = getConditionsByName("abcd任一符合条件");
-		Map<Integer, JSONArray> answerExcludeConditions = getConditionsByName("abcd排除条件");
-		Map<Integer, JSONArray> questionConditions = getConditionsByName("题目符合条件");
-				
-		String questionStr = question.toLowerCase();
-		String answerStr = answer.toLowerCase();
-		boolean questionMatch = false;
-		for (Integer questionConditionIndex : questionConditions.keySet()){
-			String questionCondition[] = questionConditions.get(questionConditionIndex).getString(0)
-										.trim().replace("(","").replace(")", "").split("\\|");
-			
-			for (String condition : questionCondition) {
-				if (questionStr.indexOf(condition) != -1) {
-					grammarRowList.add(questionConditionIndex);
-					questionMatch = true;
-				}
-			}
-			//System.out.println(grammarRowList);
-		}
-		for (Integer answerConditionIndex : answerMatchConditions.keySet()) {
-			JSONArray answerMatchCondition = answerMatchConditions.get(answerConditionIndex);
-			JSONArray answerExcludeCondition = null;
-			if (answerExcludeConditions.containsKey(answerConditionIndex)) {
-				answerExcludeCondition = answerExcludeConditions.get(answerConditionIndex);
+		List<QuestionBean> exerciseProblems = new ArrayList<>();
 
-				for (int index = 0; index < answerExcludeCondition.size(); index++) {
-					Pattern answerExcludePattern = Pattern.compile(answerExcludeCondition.get(index).toString());
-					Matcher answerExclude = answerExcludePattern.matcher(answerStr);
-					if (answerExclude.find()) {
-						return "";
-					}
+		for (int row = 1; row < exerciseFile.length; row++) {
+			QuestionBean exerciseProblem = new QuestionBean();
+			List<String> answerList = new ArrayList<>();
+			for (int column = 0; column < exerciseFile[0].length; column++) {
+				String cell = exerciseFile[row][column];
+				switch (column) {
+				case questionColumn:
+					exerciseProblem.setQuestion(cell);
+					break;
+				case AColumn:
+				case BColumn:
+				case CColumn:
+				case DColumn:
+					answerList.add(cell);
+					exerciseProblem.setAnswerList(answerList);
+					break;
+				case AnswerColumn:
+					exerciseProblem.setAnswer(cell);
+					break;
+				default:
+					break;
 				}	
 			}
+			System.out.println(matchGrammarIdRow(exerciseProblem));
+			exerciseProblems.add(exerciseProblem);
+		}
+	}
+	
+	private static List<String> matchGrammarIdRow(QuestionBean exerciseProblems) {
+		List<String> grammarId = new ArrayList<>();
+		
+		String answerCondition = "", answerExcludeCondition = "", questionCondition = "", conditionIsTheAnswer = "";
+		String[][] knowledgePointExcel = ExcelUtils.ReadFromFile(knowledgePointPath);
+		List<String> answerStrList = exerciseProblems.getAnswerList();
+		String questionStr = exerciseProblems.getQuestion();
+		String answerStr   = exerciseProblems.getAnswer();
+		
+		for (int row = 1; row < knowledgePointExcel.length; row++) {
+			answerCondition        = knowledgePointExcel[row][answerConditionColume];
+			answerExcludeCondition = knowledgePointExcel[row][answerExcludeColume];
+			questionCondition      = knowledgePointExcel[row][questionConditionColume];
+			conditionIsTheAnswer   = knowledgePointExcel[row][conditionIsAnswer];
 			
-			for (int index = 0; index < answerMatchCondition.size(); index++) {
-				Pattern answerMatchPattern = Pattern.compile(answerMatchCondition.get(index).toString());
-				Matcher answerMatch = answerMatchPattern.matcher(answerStr);
-				
-				while (answerMatch.find()) {
-					if (questionMatch && grammarRowList.contains(answerConditionIndex)) {
-						grammarID += fileContent[answerConditionIndex][grammarIdColumn] + "|";
-					}else if (!questionMatch) {
-						grammarID += fileContent[answerConditionIndex][grammarIdColumn] + "|";
-					}
+			boolean matchAnswerInclude = false, matchAnswerExclude = false, 
+					matchQuestion = false, matchAnswerCondition = false;
+			JSONArray answerConditionArray = JSON.parseArray(answerCondition);
+			JSONArray excludeConditionArray = JSON.parseArray(answerExcludeCondition);
+			
+			for (int answerNum = 0; answerNum < answerStrList.size(); answerNum ++) {
+				matchAnswerInclude = matchAnswerPattern(answerStrList.get(answerNum), answerConditionArray);
+				matchAnswerExclude = matchAnswerPattern(answerStrList.get(answerNum), excludeConditionArray);
+				matchQuestion      = matchQuestionPattern(questionStr, questionCondition);
+				if (conditionIsTheAnswer.equalsIgnoreCase("yes") && 
+					answerStrList.equals(answerStr)) {
+					matchAnswerCondition = true;
+				}else if (conditionIsTheAnswer.isEmpty() || conditionIsTheAnswer == null) {
+					matchAnswerCondition = true;
 				}
-			}		
+				if (matchAnswerInclude && !matchAnswerExclude &&
+					matchQuestion && matchAnswerCondition) 
+					grammarId.add(knowledgePointExcel[row][grammarIdColumn]);
+			}	
 		}
-		return grammarID;
+		return grammarId;
 	}
 	
-	private static Map<Integer, JSONArray> getConditionsByName(String name) {		
-		Map<Integer, String> conditions = getContentByName(knowledgePointPath, name);
-
-		Map<Integer, JSONArray> map = new LinkedHashMap<>();
-		for (Integer rowIndex : conditions.keySet()) {
-			String condition = conditions.get(rowIndex);
-			JSONArray answerConditionList = new JSONArray();
-			if (!(condition == null || condition.isEmpty())) {
-				answerConditionList = JSON.parseArray(condition);
-				map.put(rowIndex, answerConditionList);
+	private static boolean matchAnswerPattern(String answerStr, JSONArray conditions) {
+		boolean matchPattern = false;
+		if (conditions != null && !conditions.isEmpty()) {
+			for (Object condition : conditions) {
+				String match = Strings.getPattern(answerStr, condition.toString());
+				if (match != null && !match.isEmpty()) matchPattern = true;
 			}
-		}	
-		return map;
+		}
+		return matchPattern;
 	}
 	
-	private static Map<Integer, String> getContentByName(String filePath, String columnName) {
-		Map<Integer, String> output = new LinkedHashMap();
-		String[][] fileContent = ExcelUtils.ReadFromFile(filePath);
-		
-		int index = 0;		
-		for (int i = 0; i < fileContent[0].length; i++) {
-			String cell = fileContent[0][i];
-			if (cell.equals(columnName)) {			
-				index = i;
+	private static boolean matchQuestionPattern(String question, String questionCondition) {
+		if (questionCondition != null && !questionCondition.isEmpty()) {
+			questionCondition = questionCondition
+							   .substring(questionCondition.indexOf("(") + 1, questionCondition.indexOf(")"));
+			String words[] = questionCondition.split("\\|");
+			for (String word : words) {
+				boolean match = Strings.getPattern(question, word) != null && 
+								!Strings.getPattern(question, word).isEmpty();
+				if (match) return true;
 			}
-		}
-		
-		for (int row = 1; row < fileContent.length; row++) {
-			output.put(row, fileContent[row][index]);
-		}
-		return output;
+		}else 
+			return true;
+		return false;
 	}
 }

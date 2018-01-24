@@ -4,12 +4,19 @@ import java.util.Random;
 
 public class CountNumberOfRegistrations {
 	
-	static int numOfIncreaseByHours = 1000;
 	static final int hourMills = 3600000;
 	static final int minMills = 60000;
 	static final int minsPerHoue = 60;
 	
-	public static int CountRegistrations(long startTime , Integer baseNumOfRegistrations) {
+	/**
+	 * 
+	 * @param startTime 开始计数的时间，单位：ms
+	 * @param baseNumOfRegistrations 注册数的基数
+	 * @param numOfIncreaseByHours 每小时增长的注册数量
+	 * @return
+	 */
+	
+	public static int CountRegistrations(long startTime , Integer baseNumOfRegistrations, Integer numOfIncreaseByHours) {
 		
 		long nowTime = System.currentTimeMillis();
 		int numberOfRegistrations = baseNumOfRegistrations;
@@ -24,7 +31,7 @@ public class CountNumberOfRegistrations {
 				/*
 				 * 统计数据每分钟更新一次
 				 */
-				numberOfRegistrations += generateRandom(i) / minsPerHoue;
+				numberOfRegistrations += generateRandom(i, numOfIncreaseByHours) / minsPerHoue;
 			}
 			//numberOfRegistrations += generateRandom((int) timeDiffPerHour) * timeDiffPerHour;
 		}
@@ -32,10 +39,18 @@ public class CountNumberOfRegistrations {
 		return numberOfRegistrations;
 	}
 	
-	private static int generateRandom(int seed) {
-		int ret = numOfIncreaseByHours;
+	private static int generateRandom(int seed, Integer numOfIncreaseByHours) {
+		int ret = 0;
 		Random random = new Random(seed);
-		ret = (int) (Math.sqrt(50000) * random.nextGaussian() + numOfIncreaseByHours);
+		double randomNum = random.nextGaussian();
+		/*
+		 * randomNum的绝对值小于1时，其与一的和乘增长率算得随机数
+		 * 其余情况返回0
+		 */
+		if (Math.abs(randomNum) <= 1) {
+			ret = (int) ((1 + randomNum) * numOfIncreaseByHours);
+		}
+		//System.out.println(ret);
 		return ret;
 	}
 

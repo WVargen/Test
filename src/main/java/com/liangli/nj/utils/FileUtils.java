@@ -1,15 +1,13 @@
 package com.liangli.nj.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import com.liangli.nj.utils.DeviceUtils.file;
 
 import com.liangli.nj.utils.Strings;
 
@@ -50,13 +48,11 @@ public class FileUtils {
         {  
             if(files[i].isDirectory())
             {
-            
             	scanFilePath(files[i], fileMap); 
             }
 			else  
             { 
-            	fileMap.put(files[i].getName().substring(0, files[i].getName().indexOf(".")), files[i]);
-            	
+				fileMap.put(files[i].toString(), files[i]);
             }
             
         } 	
@@ -74,22 +70,26 @@ public class FileUtils {
 		int maxlevel = 0;
 		for (File files : fileMap.values())
 		{
-			String[] filePathList = files.toString().split("\\\\");
-			maxlevel = filePathList.length - file.toString().split("\\\\").length - 1;
+			
+			String[] filePathList = files.toString().split("(?:\\\\|/)");
+			int temp = filePathList.length - file.toString().split("(?:\\\\|/)").length - 1;
+			if (temp > maxlevel) {
+				maxlevel = temp;
+			}
 		}
 		
 		List<String> row = new ArrayList<>();
 		
 		for (int i = 1; i <= maxlevel; i++) {
-			row.add("category" + i);
+			row.add("目录" + i);
 		}
-		row.add("word");
+		row.add("文件");
 		output.add(row.toArray(new String[maxlevel]));
 		
 		for (String filename : fileMap.keySet())
 		{
 			row.clear();
-
+			
 			String filePathStr = fileMap.get(filename).toString().substring(filePathLength + 1);
 			row = Strings.split(filePathStr, "\\\\", "/");
 			row.remove(row.size() - 1);
@@ -98,10 +98,29 @@ public class FileUtils {
 					row.add("");
 				}
 			}
-			
-			row.add(filename);
+			row.add(filename.substring(filename.lastIndexOf("\\") + 1, filename.indexOf(".")));
 			output.add(row.toArray(new String [row.size()]));
 		}
 		return output;
+	}
+	
+	public static String readFromFile(String inputFilePath) {
+		FileInputStream inputStream = null;
+		int length;  
+        byte b[] = new byte[1024];
+        
+        String fileStr = "";
+        
+		try {
+			inputStream = new FileInputStream(inputFilePath);
+			while ((length = inputStream.read(b)) != -1) {  
+				 fileStr += new String(b, 0, length);
+			}
+			inputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return fileStr;	
 	}
 }

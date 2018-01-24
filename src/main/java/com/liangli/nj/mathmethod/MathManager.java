@@ -33,48 +33,48 @@ public class MathManager {
 //			
 			
 			MathQuestionBean mathQuestionBean = null;
-			if (type.equalsIgnoreCase("ADD_1_7")||
-				type.equalsIgnoreCase("ADD_1_8")||
-				type.equalsIgnoreCase("ADD_2_1")) {
+			if (type.equalsIgnoreCase("ADD_SUB_2_3")) {
 				mathQuestionBean = CalWholeTen.generator(gBean);
-			}else if (type.equalsIgnoreCase("ADD_1_9")||
-					  type.equalsIgnoreCase("ADD_3_1")) {
+			}else if (type.equalsIgnoreCase("UNITCAL_1_1")||
+					  type.equalsIgnoreCase("UNITCAL_5_2")) {
 				mathQuestionBean = TransCal.generator(gBean);
 				
-			}else if (type.equalsIgnoreCase("ADD_3_2")) {
+			}else if (type.equalsIgnoreCase("MULTIPLY_5_1")) {
 				mathQuestionBean = CalNumHas0.generator(gBean);
 				
-			}else if (type.equalsIgnoreCase("ADD_3_3")||
-					  type.equalsIgnoreCase("ADD_3_4")||
-					  type.equalsIgnoreCase("ADD_3_9")||
-					  type.equalsIgnoreCase("ADD_5_8")||
-					  type.equalsIgnoreCase("ADD_5_9")||
-					  type.equalsIgnoreCase("ADD_5_10")) {
+			}else if (type.equalsIgnoreCase("GEOFORMULA_5_1")||
+					  type.equalsIgnoreCase("GEOFORMULA_5_2")||
+					  type.equalsIgnoreCase("GEOFORMULA_6_1")||
+					  type.equalsIgnoreCase("GEOFORMULA_9_1")||
+					  type.equalsIgnoreCase("GEOFORMULA_9_2")||
+					  type.equalsIgnoreCase("GEOFORMULA_9_3")) {
 				mathQuestionBean = CalPerimeterAndArea.generator(gBean);
 				
-			}else if (type.equalsIgnoreCase("ADD_3_5")||
-					  type.equalsIgnoreCase("ADD_3_6")) {
+			}else if (type.equalsIgnoreCase("DIVIDE_6_1")||
+					  type.equalsIgnoreCase("DIVIDE_6_2")) {
 				mathQuestionBean = CalAnsHas0.generator(gBean);
 				
-			}else if (type.equalsIgnoreCase("ADD_3_7")) {
+			}else if (type.equalsIgnoreCase("DIVIDE_6_3")||
+					  type.equalsIgnoreCase("ADD_1_7")||
+					  type.equalsIgnoreCase("SUB_1_2")) {
 				mathQuestionBean = IntegerBasicArithmetic.generator(gBean);
 				
-			}else if (type.equalsIgnoreCase("ADD_4_6")||
+			}else if (type.equalsIgnoreCase("XIAOSHU_8_3")||
 					  type.equalsIgnoreCase("ADD_4_12")||
 					  type.equalsIgnoreCase("ADD_4_13")||
 					  type.equalsIgnoreCase("ADD_5_2")||
 					  type.equalsIgnoreCase("ADD_5_4")) {
 				mathQuestionBean = DecimalBasicArithmetic.generator(gBean);
 				
-			}else if (type.equalsIgnoreCase("ADD_3_8")) {
+			}else if (type.equalsIgnoreCase("MULTIPLY_6_1")) {
 				mathQuestionBean = CalWholeTen.generator(gBean);
 				
-			}else if (type.equalsIgnoreCase("ADD_4_1")) {
+			}else if (type.equalsIgnoreCase("TIMETRAN_6_1")) {
 				mathQuestionBean = TimeTransform.generator(gBean);
 				
-			}else if (type.equalsIgnoreCase("ADD_4_2_1")||
-					  type.equalsIgnoreCase("ADD_5_16")||
-					  type.equalsIgnoreCase("ADD_5_17")) {
+			}else if (type.equalsIgnoreCase("TRANSFORM_7_1")||
+					  type.equalsIgnoreCase("TRANSFORM_8_1")||
+					  type.equalsIgnoreCase("TRANSFORM_8_2")) {
 				mathQuestionBean = TransUnit.generator(gBean);
 				
 			}else if (type.equalsIgnoreCase("ADD_4_3")||
@@ -95,19 +95,19 @@ public class MathManager {
 					  type.equalsIgnoreCase("ADD_5_12")) {
 				mathQuestionBean = MultipleCharacteristics.generator(gBean);		
 				
-			}else if (type.equalsIgnoreCase("ADD_5_13")||
-					  type.equalsIgnoreCase("ADD_5_14")||
-					  type.equalsIgnoreCase("ADD_5_15")) {
+			}else if (type.equalsIgnoreCase("MULTIPLECHAR_10_1")||
+					  type.equalsIgnoreCase("MULTIPLECHAR_10_2")||
+					  type.equalsIgnoreCase("MULTIPLECHAR_10_3")) {
 				mathQuestionBean = VolumeAndSurfaceArea.generator(gBean);
 				
 			}else if (type.equalsIgnoreCase("ADD_5_18")||
 					  type.equalsIgnoreCase("ADD_5_19")) {
 				mathQuestionBean = MaxComDivisorAndMinComMultiper.generator(gBean);
 				
-			}else if (type.equalsIgnoreCase("ADD_4_10")) {
+			}else if (type.equalsIgnoreCase("XIAOSHU_8_1")) {
 				mathQuestionBean = DecimalDotMove.generator(gBean);
 				
-			}else if (type.equalsIgnoreCase("ADD_4_11")) {
+			}else if (type.equalsIgnoreCase("XIAOSHU_8_2")) {
 				mathQuestionBean = DecimalApproximateValue.generator(gBean);
 				
 			}

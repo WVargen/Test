@@ -1,9 +1,12 @@
 package com.liangli.nj.main;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -22,9 +25,11 @@ import com.liangli.nj.utils.DeviceUtils;
 import com.liangli.nj.utils.ExcelUtils;
 import com.liangli.nj.utils.FileUtils;
 import com.liangli.nj.utils.HttpUtils;
+import com.liangli.nj.utils.ImageUtils;
 import com.liangli.nj.utils.Strings;
 import com.liangli.nj.utils.Utils;
 import com.liangli.nj.utils.WordUtil;
+import com.liangli.nj.utils.DeviceUtils.file;
 
 
 public class main {
@@ -80,21 +85,25 @@ public class main {
 //		System.out.println(json);
 		
 		//下载对应图片
-//		try {
-//			generateUrlAndDownloadImage();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			generateUrlAndDownloadImage();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//知识点识别
-		String inputFilePath = Definition.getClassPath() + "/test.xlsx";
-		KnowledgePointRecognition.handleExerciseProblems(inputFilePath);
+//		String inputFilePath = Definition.getClassPath() + "/test.xlsx";
+//		KnowledgePointRecognition.handleExerciseProblems(inputFilePath);
 	}
 	
 	private static void generateUrlAndDownloadImage() throws Exception {
 		String[][] readExcel = ExcelUtils.ReadFromFile(Definition.getClassPath() + "/彩色卡片15类.xlsx");
 		//String[][] readExcel = ExcelUtils.ReadFromFile(Definition.getClassPath() + "/test.xlsx");
+		String [] title = {"目录", "词语", "下载文件个数", "下载路径"};
+		List<String[]> writeExcel = new ArrayList<>();
+					   writeExcel.add(title);
+					   
 		int index = 0;
 		String outputPath = Definition.getClassPath() + "/downloadFile/";
 		//String outputPath = Definition.getClassPath() + "/downloadFileTest/";
@@ -104,61 +113,83 @@ public class main {
 				index = i;
 			}
 		}
-		List<String> downloadingWords = new ArrayList<>();
+		String downloadingWord = "";
 		List<String> allWords = new ArrayList<>();
+		int successNum = 0;
 		for (int i = 1; i < readExcel.length; i++) {
-			allWords.add(readExcel[i][index]);
-			
-			File file = null;
-			file = new File(outputPath + readExcel[i][index]);
+			allWords.add(readExcel[i][index]);			
+			File file = new File(outputPath + readExcel[i][index]);
 			
 			if (file.exists()) {
 				//System.out.println("文件" + readExcel[i][index] + "已存在.");
 			} else {
-				downloadingWords.add(readExcel[i][index]);
+				downloadingWord = readExcel[i][index];
+				@SuppressWarnings("deprecation")
+				String url = "https://image.baidu.com/search/index?"
+						+ "tn=baiduimage&ipn=r&ct=201326592&cl=2&lm=-1&st=-1&"
+						+ "fm=index&fr=&hs=0&xthttps=111111&sf=1&fmq=&pv=&ic=0"
+						+ "&nc=1&z=&se=1&showtab=0&fb=0&width=&height=&face=0&"
+						+ "istype=2&ie=utf-8&word="
+						+ URLEncoder.encode(downloadingWord)
+						+ "&oq=eye&rsp=-1";
+				System.out.println("正在读取第"+i+"个");
+				boolean success = HttpUtils.ReadUrl2Path(url, outputPath,  downloadingWord);
+				if (success)successNum++; 	
 			}
-		}
-		
-		HttpUtils.ReadUrl2Path(HttpUtils.generateUrl(downloadingWords), outputPath, downloadingWords);
-		FileInputStream inputStream = null;
-		int length;  
-        byte b[] = new byte[1024]; 
+		}	
+		System.out.println("成功读取" + successNum +"个");
         
         Pattern setDataPattern = Pattern.compile("(app\\.setData\\s*\\('imgData'\\s*,\\s*)"
         		+ "[\\s\\S]*?(\\);\\s*app.setData\\s*)");
         Pattern thumbURLPattern = Pattern.compile("(\\\"thumbURL\\\":\\s*\\\").*?(\\\",)");
         
-		for (String word : allWords) {
-			String fileFolder = Definition.getClassPath() + File.separator + "Image" + File.separator +  word;
+        for (int wordIndex = 0; wordIndex < allWords.size(); wordIndex ++) {
+			String word = allWords.get(wordIndex);
+			String fileFolder = Definition.getClassPath() + "/Image/" + word;
 			//String fileFolder = Definition.getClassPath() + File.separator + "ImageTest" + File.separator +  word;
-			String fileStr = "", setDataStr = "";
-			
-			try {
-				inputStream = new FileInputStream(outputPath + word);
-				while ((length = inputStream.read(b)) != -1) {  
-					 fileStr += new String(b, 0, length);
-				}
-				Matcher matcher = setDataPattern.matcher(fileStr);
-			
-				if (matcher.find()) {
-					setDataStr = fileStr.substring(matcher.start() + matcher.group(1).length(), matcher.end() - matcher.group(2).length() - 1);	
-				}
-				
-				matcher = thumbURLPattern.matcher(setDataStr);
-				int start = 0;
-				List<String> urlStrList = new ArrayList<>();
-				
-				while (matcher.find(start)) {
-					start = matcher.end();
-					String setDataStrOk = setDataStr.substring(matcher.start() + matcher.group(1).length(), matcher.end() - matcher.group(2).length());
-					urlStrList.add(setDataStrOk);
-				}
-				HttpUtils.ReadUrlAndDownloadWithType(urlStrList, fileFolder, "jpg", true);
-			} catch (FileNotFoundException e) {
-				System.out.println("读取" + outputPath + word + "失败，没有该文件！");
+			String inputFilePath = Definition.getClassPath() + "/downloadFile/" + word;
+			String setDataStr = "";
+			String fileStr = FileUtils.readFromFile(inputFilePath);
+
+			Matcher setDatamatcher = setDataPattern.matcher(fileStr);
+			if (setDatamatcher.find()) {
+				setDataStr = fileStr.substring(setDatamatcher.start() + setDatamatcher.group(1).length(), setDatamatcher.end() - setDatamatcher.group(2).length() - 1);	
 			}
+
+			Matcher matcher = thumbURLPattern.matcher(setDataStr);
+			int start = 0, nameTotal = 0, nameIndex = 1;
+			double radio = 0.8;
+			boolean success = false;
+			while (matcher.find(start)) {
+				start = matcher.end();
+				String setDataStrOk = setDataStr.substring(matcher.start() + matcher.group(1).length(), matcher.end() - matcher.group(2).length());
+				String outputDownloadPath = fileFolder + File.separator + nameIndex + ".jpg";	
+				String outputReducePath = fileFolder + File.separator + nameIndex + "reduce" + radio + ".jpg";
+				if (!new File(outputDownloadPath).exists()) {
+					success = HttpUtils.ReadUrlAndDownload(setDataStrOk, outputDownloadPath, "jpg");
+					if (success) nameTotal ++;
+					else System.out.println(word + "下载失败.");
+				}
+				try {
+					if (!new File(outputReducePath).exists()) {
+						ImageUtils.reduceImageEqualProportion(outputDownloadPath, outputReducePath, radio, "jpg");
+					}					
+				} catch (IllegalArgumentException e) {
+					System.out.println("读取" + outputDownloadPath + "失败");
+				}
+				
+				nameIndex ++;
+			}
+			//System.out.println(word + "中成功下载" + nameTotal + "个文件.");
+			
+			List<String> record = new ArrayList<>(Arrays.asList(readExcel[wordIndex + 1]));
+						 record.add(nameTotal + "");
+						 record.add(fileFolder); 
+						 
+			writeExcel.add(record.toArray(new String [record.size()]));
 		}
-		inputStream.close();
+		File file = new File(Definition.getClassPath() + "/record.xlsx");
+		ExcelUtils.WriteToFile(file, "record", writeExcel);
 		System.out.println("\n\ncomplete！");
 	}
 	

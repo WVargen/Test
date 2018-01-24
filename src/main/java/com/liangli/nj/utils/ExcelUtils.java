@@ -5,13 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -62,10 +58,8 @@ public class ExcelUtils {
 					cellscore.setCellValue(cellvalue);
 				} catch (Exception e) {
 					System.out.println(e);
-				}
-				
+				}				
 			}
-
 		}
 					
 		FileOutputStream out = null;
@@ -93,7 +87,6 @@ public class ExcelUtils {
 		try {
 			iStream = new FileInputStream(inputFilePath);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -127,7 +120,7 @@ public class ExcelUtils {
 			 Row row = sheet.getRow(index_x);
 			 for (int index_y = 0; index_y < cellsize; index_y++) {
 				 Cell cell = row.getCell(index_y);
-				 if(cell==null||cell.equals("")){
+				 if(cell == null||cell.equals("")){
 					 content[index_x][index_y] = "";
 				 }else {
 					 switch (cell.getCellType()) {
